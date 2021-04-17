@@ -9,10 +9,11 @@
   margin-top: 30px;
 }
 
-.input-field input[type=text]:focus {
+.input-field input:focus {
   border-bottom: 1px solid rgb(8, 93, 252) !important;
   box-shadow: 0 1px solid rgb(8, 93, 252) !important;
 }
+
 
 .profile {
   display: flex;
@@ -47,8 +48,21 @@
   margin: 0px auto;
 }
 
+.create-post-container {
+  max-width: 500px;
+  margin: 10px auto !important;
+  padding: 20px;
+  text-align: center;
+}
+
 .home-card {
   width: 500px;
   height: max-content;
   margin: 26px auto !important;
+}
+
+#toast-container {
+  top: 30px !important;
+  right: 20px !important;
+  left:auto !important
 }

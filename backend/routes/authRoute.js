@@ -7,8 +7,8 @@ const jwt = require('jsonwebtoken')
 const {JWT_SECRET} = require('../keys')
 
 router.post('/signup', (req, res) => {
-  const {name,email,password} = req.body
-  if (!email || !password || !name) {
+  const {username,email,password} = req.body
+  if (!username || !email || !password) {
     res.status(422).json({error: "Please enter all fields"})
   }
   User.findOne({email:email})
@@ -19,7 +19,7 @@ router.post('/signup', (req, res) => {
     bcrypt.hash(password, 12)
     .then(hashedPassword => {
       const user = new User({
-        name, email, password: hashedPassword
+        username, email, password: hashedPassword
       })
       user.save()
       .then(() => {
@@ -49,7 +49,8 @@ router.post('/signin', (req, res) => {
     .then(doMatch => {
       if (doMatch) {
         const token = jwt.sign({_id: savedUser._id}, JWT_SECRET)
-        res.json({token})
+        const {_id, name, email} = savedUser
+        res.json({token, user:{_id, name, email}, message: "Successfully signed in"})
       }
       else {
         return res.status(422).json({error: "Invalid email address or password"})

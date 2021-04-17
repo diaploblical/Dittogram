@@ -9,7 +9,7 @@ mongoose.connect(MONGOURI, {
   useUnifiedTopology: true
 })
 mongoose.connection.on('connected', () => {
-  console.log('connected to mongodb on the cloud')
+  console.log('connected to mongodb on this PC')
 })
 mongoose.connection.on('error', (err) => {
   console.log('error connecting to the server', err)
