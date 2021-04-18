@@ -7,7 +7,7 @@ const Login = () => {
   const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const PostData = () => {
+  const postData = () => {
     if (!emailRegex.test(email)) {
       M.toast({html: "invalid email address", classes: "red"})
     } 
@@ -43,7 +43,7 @@ const Login = () => {
         <h2>Log in</h2>
         <input type="text" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button className="btn waves-effect waves-light blue" name="action" onClick={PostData}>Log in</button>
+        <button className="btn waves-effect waves-light blue" name="action" onClick={postData}>Log in</button>
         <h5>
           <Link to="/signup">Register here</Link>
         </h5>

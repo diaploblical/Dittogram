@@ -7,7 +7,7 @@ const Signup = () => {
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const PostData = () => {
+  const postData = () => {
     if (!emailRegex.test(email)) {
       M.toast({html: "invalid email address", classes: "red"})
     } 
@@ -44,7 +44,7 @@ const Signup = () => {
         <input type="text" placeholder="username" value={username} onChange={(e) => setUsername(e.target.value)} />
         <input type="text" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={PostData}>Sign up</button>
+        <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={postData}>Sign up</button>
         <h5>
           <Link to="/login">Already have an account?</Link>
         </h5>

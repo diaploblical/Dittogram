@@ -17,8 +17,9 @@ mongoose.connection.on('error', (err) => {
 
 require('./models/userModel')
 require('./models/postModel')
+require('./models/imageModel')
 
-app.use(express.json())
+app.use(express.json({limit: '20mb'}))
 app.use(require('./routes/authRoute'))
 app.use(require('./routes/postRoute'))
 
