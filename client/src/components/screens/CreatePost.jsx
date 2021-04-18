@@ -5,17 +5,26 @@ const CreatePost = () => {
   const [title, setTitle] = useState("")
   const [body, setBody] = useState("")
   const [image, setImage] = useState("")
+  
   const postDetails = async () => {
     const formData = new FormData()
-    formData.append("file", image, image.name)
+    try {
+      formData.append("file", image)
+    } catch (error) {
+      console.log(error)
+      return error
+    }
     
     await axios.post("/imageupload", formData, {
       headers: {
-        'content-type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        'Authorization': "Bearer " + localStorage.getItem("jwt"),
+        'Filename': image.name
       }
-    }).then(console.log('shit worked god'))
+    }).then(response => console.log(response.status + " " + response.statusText))
     .catch(error => {
       console.log(error)
+      console.log('shiiiiiiet it didn\'t work')
     })
   }
   return(

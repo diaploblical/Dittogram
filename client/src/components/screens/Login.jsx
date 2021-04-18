@@ -29,6 +29,8 @@ const Login = () => {
           console.log(data)
         }
         else {
+          localStorage.setItem("jwt", data.token)
+          localStorage.setItem("user", JSON.stringify(data.user))
           M.toast({html: data.message, classes: "green"})
           history.push('/')
         }

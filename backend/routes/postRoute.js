@@ -1,10 +1,11 @@
 const express = require('express')
-const { formidable } = require('formidable')
+const formidable = require('formidable')
 const router = express.Router()
 const mongoose = require('mongoose')
 const Post = mongoose.model('Post')
 const Image = mongoose.model('Image')
 const requireLogin = require('../middleware/requireLogin')
+const filePath = '../uploaded/'
 
 router.get('/allposts', (req, res) => {
   Post.find()
@@ -16,6 +17,7 @@ router.get('/allposts', (req, res) => {
     console.log(error)
   })
 })
+
 router.get('/myposts', requireLogin, (req, res) => {
   Post.find({postedBy:req.user._id})
   .populate('PostedBy', '_id name')
@@ -26,6 +28,7 @@ router.get('/myposts', requireLogin, (req, res) => {
     console.log(error)
   })
 })
+
 router.post('/createpost', requireLogin, (req, res) => {
   const {title, body, pic} = req.body
   if (!title || !body || !pic) {
@@ -46,28 +49,38 @@ router.post('/createpost', requireLogin, (req, res) => {
   })
 })
 
-router.post('/imageupload', (req, res) => {
-  const form = formidable
-  form.parse(req)
-  if (!imageData) {
+router.post('/imageupload', requireLogin, async (req, res) => {
+  const form = new formidable.IncomingForm()
+  const imageData = form.parse(req)
+  console.log(imageData)
+  const filename = req.headers.filename
+  if (filename == 'undefined') {
     return res.status(422).json({err: 'No image detected'})
+  } else {
+    imageData.on('fileBegin', function(name, file) {
+      file.path = filePath + file.name
+      imageUrl = file.path
+      console.log(file.name)
+    })
+    imageData.on('file', function(name, file) {
+      console.log("Uploaded " + file.name)
+    })
+    return res.status(200).json({message: 'dumb'})
   }
-  form.on('fileBegin', function(name, file) {
-    file.path = __dirname + '../uploaded/' + file.name
-  })
-  form.on('file', function(name, file) {
-    console.log("Uploaded " + file.name)
-  })
-  /* const image = new Image({
-    imageData,
-    uploadedBy: req.user
-  })
-  image.save().then(result => {
-    res.json({image: result})
-  })
-  .catch(error => {
-    console.log(error)
-  }) */
+  
 })
 
 module.exports = router
+
+/* 
+const image = new Image({
+      imageUrl,
+      uploadedBy: req.user
+    })
+    image.save().then(result => {
+      res.json({image: result})
+    })
+    .catch(error => {
+      console.log(error)
+    })
+*/
