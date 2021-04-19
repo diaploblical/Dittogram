@@ -1,6 +1,5 @@
 import React from 'react'
 import mahoro from '../../assets/images/robot.jpg'
-import kcco from '../../assets/images/k.png'
 
 const Profile = () => {
   return(
@@ -19,9 +18,7 @@ const Profile = () => {
           </div>
       </div>
       <div className="gallery">
-        <img className="item" src={kcco} alt="KCCO"/>
-        <img className="item" src={kcco} alt="KCCO"/>
-        <img className="item" src={kcco} alt="KCCO"/>
+        
       </div>
     </div>
   )
