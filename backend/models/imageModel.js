@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const {ObjectId} = mongoose.Schema.Types
 
 const imageSchema = new mongoose.Schema({
-  imageUrl: {
+  url: {
     type: String,
     required: true
   },
