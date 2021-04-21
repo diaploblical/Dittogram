@@ -25,7 +25,7 @@ const CreatePost = () => {
   const postDetails = async () => {
     const formData = new FormData()
     try {
-      formData.append("file", image)
+      formData.append("file", image, image.name)
     } catch (error) {
       console.log(error)
       return
