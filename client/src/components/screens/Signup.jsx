@@ -1,39 +1,29 @@
 import React, {useState} from 'react'
-import {Link} from 'react-router-dom'
+import axios from 'axios'
+import {Link, useHistory} from 'react-router-dom'
 import M from 'materialize-css'
 
 const Signup = () => {
   const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  const history = useHistory()
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const postData = () => {
+  const postData = async () => {
     if (!emailRegex.test(email)) {
       M.toast({html: "invalid email address", classes: "red"})
-    } 
-    else {
-      fetch("/signup", {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password
+    } else {
+      try {
+        let response = await axios.post("/signup", {username, email, password}, {
+          headers: {
+            "Content-Type": "application/json"
+          }
         })
-      }).then(res => res.json())
-      .then(data => {
-        if (data.error) {
-          M.toast({html: data.error, classes: "red"})
-          console.log(data)
-        }
-        else {
-          M.toast({html: data.message, classes: "green"})
-        }
-      }).catch(err => {
-        console.log(err)
-      })
+        M.toast({html: response.message, classes: "green"})
+        history.push('/')
+      } catch(e) {
+        M.toast({html: e.message, classes: "red"})
+      }
     } 
   }
 
@@ -52,5 +42,7 @@ const Signup = () => {
     </div>
   )
 }
+
+//
 
 export default Signup

@@ -6,33 +6,26 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const {JWT_SECRET} = require('../keys')
 
-router.post('/signup', (req, res) => {
+router.post('/signup', async (req, res) => {
   const {username,email,password} = req.body
   if (!username || !email || !password) {
-    res.status(422).json({error: "Please enter all fields"})
+    res.status(422).json({message: "Please enter all fields"})
   }
-  User.findOne({email:email})
-  .then((savedUser) => {
-    if (savedUser) {
-      return res.status(422).json({error: "A user with this email address already exists"})
+  const foundUser = await User.findOne({email:email})
+  try {
+    if (foundUser) {
+      return res.status(422).json({message: "A user with this email address already exists"})
     }
-    bcrypt.hash(password, 12)
-    .then(hashedPassword => {
-      const user = new User({
-        username, email, password: hashedPassword
-      })
-      user.save()
-      .then(() => {
-        res.json({message: "Successfully registered"})
-      })
-      .catch(err => {
-        console.log(err)
-      })
-    }) 
-  })
-  .catch(err => {
-    console.log(err)
-  })
+    const hashedPassword = await bcrypt.hash(password, 12)
+    const user = new User({
+      username, email, password: hashedPassword
+    })
+    await user.save()
+    return res.status(200).json({message: "User successfully registered"})
+  } catch(error) {
+    console.log(error)
+    return res.json({error: "An error has occurred"})
+  }
 })
 
 router.post('/signin', (req, res) => {

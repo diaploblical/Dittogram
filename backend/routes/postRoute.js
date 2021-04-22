@@ -16,7 +16,6 @@ async function checkCreateUploadsFolder(uploadsFolder) {
     if (e && e.code == 'ENOENT') {
       try {
         await fs.mkdirAsync(uploadsFolder)
-        next()
       } catch(e) {
         console.log(e)
         return res.json({message: e})
