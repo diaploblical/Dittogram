@@ -11,7 +11,7 @@ router.post('/signup', async (req, res) => {
   if (!username || !email || !password) {
     res.status(422).json({message: "Please enter all fields"})
   }
-  const foundUser = await User.findOne({email:email})
+  const foundUser = await User.findOne({email})
   try {
     if (foundUser) {
       return res.status(422).json({message: "A user with this email address already exists"})
@@ -23,12 +23,11 @@ router.post('/signup', async (req, res) => {
     await user.save()
     return res.status(200).json({message: "User successfully registered"})
   } catch(error) {
-    console.log(error)
     return res.json({error: "An error has occurred"})
   }
 })
 
-router.post('/signin', (req, res) => {
+router.post('/signin', async (req, res) => {
   const {email, password} = req.body
   if (!email || !password) {
     res.status(422).json({error: "Please enter an email address and a password"})

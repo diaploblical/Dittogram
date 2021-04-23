@@ -19,7 +19,8 @@ const Signup = () => {
             "Content-Type": "application/json"
           }
         })
-        M.toast({html: response.message, classes: "green"})
+        console.log(response)
+        M.toast({html: response.data.message, classes: "green"})
         history.push('/')
       } catch(e) {
         M.toast({html: e.message, classes: "red"})
