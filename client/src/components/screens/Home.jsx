@@ -1,22 +1,19 @@
 import axios from 'axios'
 import React, {useState, useEffect} from 'react'
+import M from 'materialize-css'
 
 const Home = () => {
   const [data, setData] = useState([])
   useEffect(() => {
-    axios.get("/allposts", {
-      headers: {
-        "Authorization": "Bearer " + localStorage.getItem("jwt")
-      }
-    })
-    .then(result => {
-      //setData(result.data.posts)
-      console.log(result)
-    })
-    .catch(error => {
-      console.log(error)
-      return
-    })
+    try {
+      let response = axios.get("/allposts", {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("jwt")
+        }
+      })
+    } catch(error) {
+      M.toast({html: error, classes: "red"})
+    }
   },[])
   return(
     <div className="custom-container">

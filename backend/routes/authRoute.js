@@ -23,25 +23,25 @@ router.post('/signup', async (req, res) => {
     await user.save()
     return res.status(200).json({message: "User successfully registered"})
   } catch(error) {
-    
+    return res.json({error: "An error has occurred"})
   }
 })
 
-router.post('/signin', async (req, res) => {
+router.post('/login', async (req, res) => {
   const {email, password} = req.body
   if (!email || !password) {
-    res.status(422).json({error: "Please enter an email address and a password"})
+    return res.status(422).json({error: "Please enter an email address and a password"})
   }
-  const savedUser = User.findOne({email})
+  const savedUser = await User.findOne({email}).exec()
   if (!savedUser) {
     return res.status(422).json({error: "Invalid email address or password"})
   }
   try {
-    const doMatch = bcrypt.compare(password, savedUser.password)
+    const doMatch = await bcrypt.compare(password, savedUser.password)
     if (doMatch) {
       const token = jwt.sign({_id: savedUser._id}, JWT_SECRET)
       const {_id, name, email} = savedUser
-      res.json({token, user:{_id, name, email}, message: "Successfully signed in"})
+      return res.json({token, user:{_id, name, email}, message: "Successfully signed in"})
     } else {
       return res.status(422).json({error: "Invalid email address or password"})
     }

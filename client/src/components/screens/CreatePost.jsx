@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import axios from 'axios'
 import M from 'materialize-css'
 
@@ -7,44 +7,36 @@ const CreatePost = () => {
   const [body, setBody] = useState("")
   const [image, setImage] = useState("")
   const [url, setUrl] = useState("")
-  useEffect(() => {
-    if (url) {
-      axios.post("/createpost", {title, body, url}, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': "Bearer " + localStorage.getItem("jwt")
-        }
-      })
-      .then(response => M.toast({html: response.data.message, classes: "green"}))
-      .catch(error => {
-        M.toast({html: error.response.data.message, classes: "red"})
-      })
-    }   
-  },[url])
   
   const postDetails = async () => {
     const formData = new FormData()
     try {
       formData.append("file", image, image.name)
+      let response = await axios.post("/imageupload", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': "Bearer " + localStorage.getItem("jwt"),
+          'Filename': image.name
+        }
+      })
+      await M.toast({html: response.data.message, classes: "green"})
+      await setUrl(response.data.url)
+      console.log(response.data.url)
+    } catch(error) {
+      M.toast({html: error.data.message, classes: "red"})
+    }
+    try {
+      let secondResponse = await axios.post("/createpost", {title, body, url}, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer " + localStorage.getItem("jwt")
+        }
+      })
+      await M.toast({html: secondResponse.data.message, classes: "green"})
     } catch (error) {
       console.log(error)
-      return
+      await M.toast({html: error.data.message, classes: "green"})
     }
-    await axios.post("/imageupload", formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': "Bearer " + localStorage.getItem("jwt"),
-        'Filename': image.name
-      }
-    })
-    .then(response => {
-      M.toast({html: response.data.message, classes: "green"})
-      setUrl(response.data.url)
-    })
-    .catch(error => {
-      M.toast({html: error.response.data.message, classes: "red"})
-    })
-    
   }
   
   return(

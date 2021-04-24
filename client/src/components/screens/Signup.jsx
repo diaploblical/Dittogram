@@ -22,8 +22,8 @@ const Signup = () => {
         console.log(response)
         M.toast({html: response.data.message, classes: "green"})
         history.push('/')
-      } catch(e) {
-        M.toast({html: e.message, classes: "red"})
+      } catch(error) {
+        M.toast({html: error.message, classes: "red"})
       }
     } 
   }

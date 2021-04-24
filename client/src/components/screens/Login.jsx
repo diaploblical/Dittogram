@@ -1,5 +1,6 @@
 import React, {useState, useContext} from 'react'
 import {Link, useHistory} from 'react-router-dom'
+import axios from 'axios'
 import {UserContext} from '../../App'
 import M from 'materialize-css'
 
@@ -9,38 +10,26 @@ const Login = () => {
   const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const postData = () => {
+
+  const postData = async () => {
     if (!emailRegex.test(email)) {
-      M.toast({html: "invalid email address", classes: "red"})
-    } 
-    else {
-      fetch("/signin", {
-        method: "post",
+      M.toast({html: "Invalid email address", classes: "red"})
+    }   
+    try {
+      let response = await axios.post("/login", {email, password}, {
         headers: {
           "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email,
-          password
-        })
-      }).then(res => res.json())
-      .then(data => {
-        console.log(data)
-        if (data.error) {
-          M.toast({html: data.error, classes: "red"})
-          console.log(data)
         }
-        else {
-          localStorage.setItem("jwt", data.token)
-          localStorage.setItem("user", JSON.stringify(data.user))
-          dispatch({type: "USER", payload: data.user})
-          M.toast({html: data.message, classes: "green"})
-          history.push('/')
-        }
-      }).catch(err => {
-        console.log(err)
       })
-    } 
+      localStorage.setItem("jwt", response.data.token)
+      localStorage.setItem("user", JSON.stringify(response.data.user))
+      dispatch({type: "USER", payload: response.data.user})
+      M.toast({html: response.data.message, classes: "green"})
+      history.push('/')
+    } catch(error) {
+      console.log(error)
+      M.toast({html: error.message, classes: "red"})
+    }
   }
   return(
     <div className="my-card">

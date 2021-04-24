@@ -38,14 +38,12 @@ function checkFileType(file) {
 }
 
 router.get('/allposts', requireLogin, (req, res) => {
-  Post.find()
-  .populate('postedBy','_id name')
-  .then(posts => {
-    res.json(posts)
-  })
-  .catch(error => {
-    console.log(error)
-  })
+  try {
+    const allPosts = Post.find().populate('postedBy','_id name').exec()
+    return res.json(allPosts)
+  } catch(error) {
+    return res.json({error: 'An error occurred'})
+  }
 })
 
 router.get('/myposts', requireLogin, (req, res) => {
@@ -79,7 +77,8 @@ router.post('/imageupload', requireLogin, async (req, res) => {
       console.log('The file upload failed, now attempting to remove the temp file...')
       try {
         await fs.unlinkAsync(file.path)
-      } catch(e) {
+      } catch(error) {
+        console.log(error)
         return res.json({message: 'The file failed to upload'})
       }
     }
@@ -90,11 +89,11 @@ router.post('/imageupload', requireLogin, async (req, res) => {
     })
     try {
       image.save()
-    } catch(e) {
-      console.log(e)
-      return res.json({message: e})
+    } catch(error) {
+      console.log(error)
+      return res.json({message: 'Image failed to save to the database'})
     }
-    return res.json({message: 'Image uploaded successfully'})
+    return res.json({url: image.url, message: 'Image uploaded successfully'})
   }) 
 })
 
@@ -106,20 +105,20 @@ router.post('/createpost', requireLogin, async (req, res) => {
     console.log(url)
     return res.status(422).json({message: 'Please enter all fields'})
   }
-  req.user.password = undefined
-  const post = new Post({
-    title,
-    body,
-    imageUrl: url,
-    postedBy: req.user
-  })
-  post.save()
-  .then(result => {
-    res.status(200).json({message: 'Post successfully created'})
-  })
-  .catch(error => {
+  try {
+    req.user.password = undefined
+    const post = new Post({
+      title,
+      body,
+      imageUrl: url,
+      postedBy: req.user
+    })
+    post.save()
+    return res.json({message: 'Post successfully created'})
+  } catch(error) {
     console.log(error)
-  })
+    res.json({message: 'Post failed to be created'})
+  }
 })
 
 module.exports = router
