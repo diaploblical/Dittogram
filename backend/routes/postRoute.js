@@ -37,12 +37,12 @@ function checkFileType(file) {
   return true
 }
 
-router.get('/allposts', requireLogin, (req, res) => {
+router.get('/allposts', requireLogin, async (req, res) => {
   try {
-    const allPosts = Post.find().populate('postedBy','_id name').exec()
+    const allPosts = await Post.find().populate('postedBy', 'name').exec()
     return res.json(allPosts)
   } catch(error) {
-    return res.json({error: 'An error occurred'})
+    return res.json({message: 'An error occurred'})
   }
 })
 
@@ -84,7 +84,6 @@ router.post('/imageupload', requireLogin, async (req, res) => {
     }
     const image = new Image({
       filename,
-      url: join(uploadsFolder, filename),
       uploadedBy: req.user
     })
     try {
@@ -93,16 +92,13 @@ router.post('/imageupload', requireLogin, async (req, res) => {
       console.log(error)
       return res.json({message: 'Image failed to save to the database'})
     }
-    return res.json({url: image.url, message: 'Image uploaded successfully'})
+    return res.json({message: 'Image uploaded successfully', photo: image.filename})
   }) 
 })
 
 router.post('/createpost', requireLogin, async (req, res) => {
-  const {title, body, url} = req.body
-  if (!title || !body || !url) {
-    console.log(body)
-    console.log(title)
-    console.log(url)
+  const {title, body, photo} = req.body
+  if (!title || !body || !photo) {
     return res.status(422).json({message: 'Please enter all fields'})
   }
   try {
@@ -110,11 +106,11 @@ router.post('/createpost', requireLogin, async (req, res) => {
     const post = new Post({
       title,
       body,
-      imageUrl: url,
+      photo,
       postedBy: req.user
     })
     post.save()
-    return res.json({message: 'Post successfully created'})
+    return res.json({message: 'Post successfully created', post})
   } catch(error) {
     console.log(error)
     res.json({message: 'Post failed to be created'})

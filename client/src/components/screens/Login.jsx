@@ -13,7 +13,7 @@ const Login = () => {
 
   const postData = async () => {
     if (!emailRegex.test(email)) {
-      M.toast({html: "Invalid email address", classes: "red"})
+      return M.toast({html: "Invalid email address", classes: "red"})
     }   
     try {
       let response = await axios.post("/login", {email, password}, {
@@ -27,8 +27,8 @@ const Login = () => {
       M.toast({html: response.data.message, classes: "green"})
       history.push('/')
     } catch(error) {
-      console.log(error)
-      M.toast({html: error.message, classes: "red"})
+      console.log()
+      M.toast({html: error.response.data.message, classes: "red"})
     }
   }
   return(

@@ -1,9 +1,11 @@
-import React, {useState} from 'react'
+import React, {useState, useContext} from 'react'
 import axios from 'axios'
 import {Link, useHistory} from 'react-router-dom'
+import {UserContext} from '../../App'
 import M from 'materialize-css'
 
 const Signup = () => {
+  const {state, dispatch} = useContext(UserContext)
   const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   const history = useHistory()
   const [username, setUsername] = useState("")
@@ -11,7 +13,7 @@ const Signup = () => {
   const [password, setPassword] = useState("")
   const postData = async () => {
     if (!emailRegex.test(email)) {
-      M.toast({html: "invalid email address", classes: "red"})
+      M.toast({html: "Invalid email address", classes: "red"})
     } else {
       try {
         let response = await axios.post("/signup", {username, email, password}, {
@@ -21,9 +23,18 @@ const Signup = () => {
         })
         console.log(response)
         M.toast({html: response.data.message, classes: "green"})
-        history.push('/')
+        let secondResponse = await axios.post("/login", {email, password}, {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        localStorage.setItem("jwt", secondResponse.data.token)
+        localStorage.setItem("user", JSON.stringify(secondResponse.data.user))
+        dispatch({type: "USER", payload: secondResponse.data.user})
+        M.toast({html: secondResponse.data.message, classes: "green"})
+        return history.push('/')
       } catch(error) {
-        M.toast({html: error.message, classes: "red"})
+        return M.toast({html: error.response.data.message, classes: "red"})
       }
     } 
   }

@@ -4,41 +4,43 @@ import M from 'materialize-css'
 
 const Home = () => {
   const [data, setData] = useState([])
+  
   useEffect(() => {
-    try {
-      let response = axios.get("/allposts", {
-        headers: {
-          "Authorization": "Bearer " + localStorage.getItem("jwt")
-        }
-      })
-    } catch(error) {
-      M.toast({html: error, classes: "red"})
+    const getAllPosts = async () => {
+      try {
+        let response = axios.get("/allposts", {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem("jwt")
+          }
+        })
+        setData((await response).data)
+      } catch(error) {
+        M.toast({html: error.response.data.message, classes: "red"})
+      }
     }
+    getAllPosts() 
   },[])
   return(
     <div className="custom-container">
       {
         data.map(item => {
-          const url = 'localhost:5000' + item.photo
-          console.log(url)
+          console.log(item)
           return(
             <div className="card home-card">
-              <h5>{item.postedBy.title}</h5>
+              <h5></h5>
               <div className="card-image">
-                <img src={url} alt="NIGAGHONE"/>
+                <img alt="NIGAGHONE"/>
               </div>
               <div className="card-content">
                 <i className="material-icons">favorite</i>
-                <h4>{item.title}</h4>
-                <p>{item.body}</p>
+                <h4></h4>
+                <p></p>
                 <input type="text" placeholder="Add a comment"/>
               </div>
             </div>
           )
         })
       }
-      
-      
     </div>
   )
 }

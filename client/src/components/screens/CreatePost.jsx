@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import M from 'materialize-css'
 
@@ -6,8 +6,23 @@ const CreatePost = () => {
   const [title, setTitle] = useState("")
   const [body, setBody] = useState("")
   const [image, setImage] = useState("")
-  const [url, setUrl] = useState("")
+  const [photo, setPhoto] = useState("")
   
+  useEffect(() => {
+    const createPost = async() => {
+      if (photo) {
+        let response = await axios.post("/createpost", {title, body, photo}, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': "Bearer " + localStorage.getItem("jwt")
+          }
+        })
+        M.toast({html: response.data.message, classes: "green"})
+      } 
+    }
+    createPost()
+  },[photo])
+
   const postDetails = async () => {
     const formData = new FormData()
     try {
@@ -19,23 +34,10 @@ const CreatePost = () => {
           'Filename': image.name
         }
       })
-      await M.toast({html: response.data.message, classes: "green"})
-      await setUrl(response.data.url)
-      console.log(response.data.url)
+      M.toast({html: response.data.message, classes: "green"})
+      setPhoto(response.data.photo)
     } catch(error) {
-      M.toast({html: error.data.message, classes: "red"})
-    }
-    try {
-      let secondResponse = await axios.post("/createpost", {title, body, url}, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': "Bearer " + localStorage.getItem("jwt")
-        }
-      })
-      await M.toast({html: secondResponse.data.message, classes: "green"})
-    } catch (error) {
-      console.log(error)
-      await M.toast({html: error.data.message, classes: "green"})
+      M.toast({html: error.response.data.message, classes: "red"})
     }
   }
   

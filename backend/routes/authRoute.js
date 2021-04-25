@@ -23,18 +23,18 @@ router.post('/signup', async (req, res) => {
     await user.save()
     return res.status(200).json({message: "User successfully registered"})
   } catch(error) {
-    return res.json({error: "An error has occurred"})
+    return res.json({message: "An error has occurred"})
   }
 })
 
 router.post('/login', async (req, res) => {
   const {email, password} = req.body
   if (!email || !password) {
-    return res.status(422).json({error: "Please enter an email address and a password"})
+    return res.status(422).json({message: "Please enter an email address and a password"})
   }
   const savedUser = await User.findOne({email}).exec()
   if (!savedUser) {
-    return res.status(422).json({error: "Invalid email address or password"})
+    return res.status(422).json({message: "Invalid email address or password"})
   }
   try {
     const doMatch = await bcrypt.compare(password, savedUser.password)
@@ -43,10 +43,10 @@ router.post('/login', async (req, res) => {
       const {_id, name, email} = savedUser
       return res.json({token, user:{_id, name, email}, message: "Successfully signed in"})
     } else {
-      return res.status(422).json({error: "Invalid email address or password"})
+      return res.status(422).json({message: "Invalid email address or password"})
     }
   } catch(error) {
-    return res.json({error: "An error has occurred"})
+    return res.json({message: "An error has occurred"})
   }
 })
 
