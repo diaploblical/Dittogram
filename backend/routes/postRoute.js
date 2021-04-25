@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 const Post = mongoose.model('Post')
 const Image = mongoose.model('Image')
 const requireLogin = require('../middleware/requireLogin')
-const {join} = require('path')
+const path = require('path')
 
 async function checkCreateUploadsFolder(uploadsFolder) {
   try {
@@ -57,6 +57,13 @@ router.get('/myposts', requireLogin, (req, res) => {
   })
 })
 
+router.get('/api/image/:id', async(req, res) => {
+  const imageId = req.params.id
+  const image = await Image.findOne({_id: imageId})
+  console.log(path.join(__dirname, '..', `/uploads/${image.filename}`))
+  return res.sendFile(path.join(__dirname, '..', `/uploads/${image.filename}`))
+})
+
 router.post('/imageupload', requireLogin, async (req, res) => {
   const form = Formidable.IncomingForm()
   const uploadsFolder = join(__dirname, '/../uploads')
@@ -73,7 +80,7 @@ router.post('/imageupload', requireLogin, async (req, res) => {
     }
     try {
       await fs.renameAsync(file.path, join(uploadsFolder, filename))
-    } catch(e) {
+    } catch(error) {
       console.log('The file upload failed, now attempting to remove the temp file...')
       try {
         await fs.unlinkAsync(file.path)
@@ -92,7 +99,7 @@ router.post('/imageupload', requireLogin, async (req, res) => {
       console.log(error)
       return res.json({message: 'Image failed to save to the database'})
     }
-    return res.json({message: 'Image uploaded successfully', photo: image.filename})
+    return res.json({message: 'Image uploaded successfully', photo: image._id})
   }) 
 })
 
