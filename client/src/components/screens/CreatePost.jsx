@@ -11,7 +11,8 @@ const CreatePost = () => {
   useEffect(() => {
     const createPost = async() => {
       if (photo) {
-        let response = await axios.post("/createpost", {title, body, photo}, {
+        const passedPhoto = photo.split(".").shift()
+        let response = await axios.post("/createpost", {title, body, photo: passedPhoto}, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': "Bearer " + localStorage.getItem("jwt")

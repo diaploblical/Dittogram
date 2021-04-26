@@ -8,6 +8,7 @@ const Post = mongoose.model('Post')
 const Image = mongoose.model('Image')
 const requireLogin = require('../middleware/requireLogin')
 const path = require('path')
+const {join} = require('path')
 
 async function checkCreateUploadsFolder(uploadsFolder) {
   try {
@@ -60,8 +61,11 @@ router.get('/myposts', requireLogin, (req, res) => {
 router.get('/api/image/:id', async(req, res) => {
   const imageId = req.params.id
   const image = await Image.findOne({_id: imageId})
-  console.log(path.join(__dirname, '..', `/uploads/${image.filename}`))
-  return res.sendFile(path.join(__dirname, '..', `/uploads/${image.filename}`))
+  var fileType = '.' + image.filename.split('.').pop()
+  if (fileType == '.jpg') {
+    fileType = '.jpeg'
+  }
+  return res.sendFile(path.join(__dirname, '..', `/uploads/${imageId}` + fileType))
 })
 
 router.post('/imageupload', requireLogin, async (req, res) => {
@@ -74,32 +78,29 @@ router.post('/imageupload', requireLogin, async (req, res) => {
   form.parse(req, async (err, fields, files) => {
     const file = files.file
     const isValid = checkFileType(file)
-    const filename = encodeURIComponent(file.name.replace(/&. *;+/g, '-'))
+    console.log()
     if  (!isValid) {
       return res.json({message: 'Invalid file type'})
     }
     try {
-      await fs.renameAsync(file.path, join(uploadsFolder, filename))
+      const image = new Image({
+        filename: file.name,
+        uploadedBy: req.user
+      })
+      var storageFilename = ((image._id) + '.' + file.type.split('/').pop())
+      await fs.renameAsync(file.path, join(uploadsFolder, storageFilename))
+      image.save()
     } catch(error) {
       console.log('The file upload failed, now attempting to remove the temp file...')
       try {
         await fs.unlinkAsync(file.path)
+        return res.status.json({error: 'log'})
       } catch(error) {
         console.log(error)
         return res.json({message: 'The file failed to upload'})
       }
     }
-    const image = new Image({
-      filename,
-      uploadedBy: req.user
-    })
-    try {
-      image.save()
-    } catch(error) {
-      console.log(error)
-      return res.json({message: 'Image failed to save to the database'})
-    }
-    return res.json({message: 'Image uploaded successfully', photo: image._id})
+    return res.json({message: 'Image uploaded successfully', photo: storageFilename})
   }) 
 })
 
@@ -120,7 +121,7 @@ router.post('/createpost', requireLogin, async (req, res) => {
     return res.json({message: 'Post successfully created', post})
   } catch(error) {
     console.log(error)
-    res.json({message: 'Post failed to be created'})
+    return res.json({message: 'Post failed to be created'})
   }
 })
 
