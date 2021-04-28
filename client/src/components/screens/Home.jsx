@@ -20,19 +20,64 @@ const Home = () => {
     }
     getAllPosts() 
   },[])
+  const likePost = async (id) => {
+    let response = await axios.put("/like", {postId: id}, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("jwt")
+      }
+    })
+    try {
+      const newData = data.map(item => {
+        if (item._id === response.data._id) {
+          return response.data
+        } else {
+          return item
+        }
+      })
+      setData(await newData)
+      console.log(data)
+    } catch(error) {
+      console.log(data)
+      console.log(error)
+    }
+  }
+  const unlikePost = async (id) => {
+    let response = await axios.put("/unlike", {postId: id}, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("jwt")
+      }
+    })
+    try {
+      const newData = data.map(item => {
+        if (item._id === response.data._id) {
+          return response.data
+        } else {
+          return item
+        }
+      })
+      setData(newData)
+    } catch(error) {
+      console.log(error)
+    }
+  }
   return(
     <div className="custom-container">
       {
         data.map(item => {
           return(
-            <div className="card home-card">
-              <h5>{item.title}</h5>
+            <div className="card home-card">            
               <div className="card-image">
                 <img src={`http://localhost:5000/api/image/${item.photo}`} alt="NIGAGHONE"/>
               </div>
               <div className="card-content">
-                <i className="material-icons">favorite</i>
-                <h4>{item.body}</h4>
+                <i className="material-icons mi-margins">favorite</i>
+                <i className="material-icons mi-margins" onClick={() => {likePost(item._id)}}>thumb_up</i>
+                <i className="material-icons mi-margins" onClick={() => {unlikePost(item._id)}}>thumb_down</i>
+                <h6>{item.likes.length} likes</h6>
+                <h5>{item.title}</h5>
+                <h6>{item.body}</h6>
                 <p></p>
                 <input type="text" placeholder="Add a comment"/>
               </div>

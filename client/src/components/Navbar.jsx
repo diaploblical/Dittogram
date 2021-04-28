@@ -21,7 +21,7 @@ const Navbar = () => {
   return(
     <nav>
       <div className="nav-wrapper blue">
-        <Link to={state ? "/" : "/login"} className="brand-logo">stupid fuckin test site</Link>
+        <Link to={state ? "/" : "/login"} className="brand-logo">notInstagram</Link>
         <ul id="nav-mobile" className="right">
           {renderList()}
         </ul>
