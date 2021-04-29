@@ -36,7 +36,7 @@ const Home = () => {
           return item
         }
       })
-      setData(await newData)
+      setData(newData)
     } catch(error) {
       console.log(error)
     }
@@ -78,7 +78,6 @@ const Home = () => {
       })
       setData(newData)
     } catch(error) {
-      console.log(await response)
       console.log(error)
     }
   }

@@ -131,7 +131,10 @@ router.post('/createpost', requireLogin, async (req, res) => {
 })
 
 router.put('/like', requireLogin, async (req, res) => {
-  Post.findByIdAndUpdate(req.body.postId, {$push:{likes: req.user._id}}, {new: true}).exec((error, result) => {
+  Post.findByIdAndUpdate(req.body.postId, {$push:{likes: req.user._id}}, {new: true})
+  .populate("comments.postedBy", "_id username")
+  .populate("postedBy", "_id username")
+  .exec((error, result) => {
     if (error) {
       return res.json({message: error})
     } else {
@@ -141,7 +144,10 @@ router.put('/like', requireLogin, async (req, res) => {
 })
 
 router.put("/unlike", requireLogin, async (req, res) => {
-  Post.findByIdAndUpdate(req.body.postId, {$pull:{likes: req.user._id}}, {new: true}).exec((error, result) => {
+  Post.findByIdAndUpdate(req.body.postId, {$pull:{likes: req.user._id}}, {new: true})
+  .populate("comments.postedBy", "_id username")
+  .populate("postedBy", "_id username")
+  .exec((error, result) => {
     if (error) {
       return res.json({message: error})
     } else {
