@@ -161,8 +161,20 @@ router.put("/comment", requireLogin, async (req, res) => {
     text: req.body.text,
     postedBy: req.user.id
   }
-  console.log(req.body)
   Post.findByIdAndUpdate(req.body.postId, {$push:{comments: comment}}, {new: true})
+  .populate("comments.postedBy", "_id username")
+  .populate("postedBy", "_id username")
+  .exec((error, result) => {
+    if (error) {
+      return res.json({message: error})
+    } else {
+      return res.json(result)
+    }
+  })
+})
+
+router.put("/deletecomment", requireLogin, async(req, res) => {
+  Post.findByIdAndUpdate(req.body.postId, {$pull:{comments: {_id: req.body.commentId, postedBy: req.user._id}}}, {new: true})
   .populate("comments.postedBy", "_id username")
   .populate("postedBy", "_id username")
   .exec((error, result) => {

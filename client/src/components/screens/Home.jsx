@@ -81,6 +81,25 @@ const Home = () => {
       console.log(error)
     }
   }
+  const deleteComment = async (postId, commentId) => {
+    let response = await axios.put("/deletecomment", {postId, commentId}, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem("jwt")
+      }
+    })
+    try {
+      const newData = data.map(item => {
+        if (item._id === response.data._id) {
+          return response.data
+        } else {
+          return item
+        }
+      })
+      setData(newData)
+    } catch(error) {
+      console.log(error)
+    }
+  }
   const deletePost = async (postId) => {
     let response = await axios.delete(`/deletepost/${postId}`, {
       headers: {
@@ -126,7 +145,10 @@ const Home = () => {
                   item.comments.map(record=> {
                     return(
                       <h6 key={record._id}>
-                        <span style={{fontWeight: "500"}}>{record.postedBy.username} </span>{record.text}                 
+                        <span style={{fontWeight: "500"}}>{record.postedBy.username} </span>{record.text}
+                        {record.postedBy._id === state._id && 
+                          <i className="material-icons" style={{float: "right"}} onClick={() => {deleteComment(item._id, record._id)}}>delete</i>
+                        }                
                       </h6>
                     )
                   })

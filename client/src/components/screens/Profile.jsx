@@ -1,7 +1,6 @@
 import React, {useEffect, useState, useContext} from 'react'
 import { UserContext } from '../../App'
 import axios from 'axios'
-import mahoro from '../../assets/images/robot.jpg'
 
 const Profile = () => {
   const [myPics, setPics] = useState([])
@@ -26,7 +25,7 @@ const Profile = () => {
     <div className="custom-container">
       <div className="profile">
           <div>
-            <img className="avatar" src={mahoro} alt="robot" />
+            <img className="avatar" alt="robot" />
           </div>
           <div>
             <h4>{state ? state.username : "LOADINGU LOADINGU"}</h4>
