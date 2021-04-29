@@ -1,3 +1,4 @@
+/* login and signup form */
 .auth-card {
   padding: 20px;
   text-align: center;
@@ -5,15 +6,21 @@
   margin: 10px auto !important;
 }
 
+/* profile card */
 .my-card {
   margin-top: 30px;
+}
+
+.home-card {
+  width: 500px;
+  height: max-content;
+  margin: 26px auto !important;
 }
 
 .input-field input:focus {
   border-bottom: 1px solid rgb(8, 93, 252) !important;
   box-shadow: 0 1px solid rgb(8, 93, 252) !important;
 }
-
 
 .profile {
   display: flex;
@@ -55,12 +62,6 @@
   text-align: center;
 }
 
-.home-card {
-  width: 500px;
-  height: max-content;
-  margin: 26px auto !important;
-}
-
 #toast-container {
   top: 30px !important;
   right: 20px !important;
@@ -69,4 +70,8 @@
 
 .mi-margins {
   margin: 0 5px 0 5px;
+}
+
+.material-icons:hover {
+  cursor: pointer;
 }

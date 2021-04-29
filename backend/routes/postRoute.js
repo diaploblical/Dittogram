@@ -10,6 +10,8 @@ const requireLogin = require('../middleware/requireLogin')
 const path = require('path')
 const {join} = require('path')
 
+/*This function checks to see if a directory for file uploads already exists. 
+If it does not exist the function will create it. */
 async function checkCreateUploadsFolder(uploadsFolder) {
   try {
     await fs.statSync(uploadsFolder)
@@ -40,7 +42,10 @@ function checkFileType(file) {
 
 router.get('/allposts', requireLogin, async (req, res) => {
   try {
-    const allPosts = await Post.find().populate('postedBy', 'name').exec()
+    const allPosts = await Post.find()
+    .populate('postedBy', 'username')
+    .populate('comments.postedBy', '_id username')
+    .exec()
     return res.json(allPosts)
   } catch(error) {
     return res.json({message: 'An error occurred'})
@@ -73,7 +78,7 @@ router.post('/imageupload', requireLogin, async (req, res) => {
   const uploadsFolder = join(__dirname, '/../uploads')
   const folderExists = await checkCreateUploadsFolder(uploadsFolder)
   if (!folderExists) {
-    return res.json({message: 'There was an error when creating the uploads folder'})
+    return res.json({message: 'There was an error with creating the uploads folder'})
   }
   form.parse(req, async (err, fields, files) => {
     const file = files.file
@@ -135,12 +140,48 @@ router.put('/like', requireLogin, async (req, res) => {
   })
 })
 
-router.put('/unlike', requireLogin, async (req, res) => {
+router.put("/unlike", requireLogin, async (req, res) => {
   Post.findByIdAndUpdate(req.body.postId, {$pull:{likes: req.user._id}}, {new: true}).exec((error, result) => {
     if (error) {
       return res.json({message: error})
     } else {
       return res.json(result)
+    }
+  })
+})
+
+router.put("/comment", requireLogin, async (req, res) => {
+  const comment = {
+    text: req.body.text,
+    postedBy: req.user.id
+  }
+  console.log(req.body)
+  Post.findByIdAndUpdate(req.body.postId, {$push:{comments: comment}}, {new: true})
+  .populate("comments.postedBy", "_id username")
+  .populate("postedBy", "_id username")
+  .exec((error, result) => {
+    if (error) {
+      return res.json({message: error})
+    } else {
+      return res.json(result)
+    }
+  })
+})
+
+router.delete("/deletepost/:postId", requireLogin, async(req, res) => {
+  Post.findOne({_id: req.params.postId})
+  .populate("postedBy", "_id")
+  .exec((error, post) => {
+    if (error || !post) {
+      return res.json({message: error})
+    }
+    if (post.postedBy._id.toString() === req.user._id.toString()) {
+      try {
+        post.remove()
+        return res.json({message: "Post successfully deleted", item: post})
+      } catch(error) {
+        return res.json({message: error})
+      }
     }
   })
 })
