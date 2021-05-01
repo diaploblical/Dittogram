@@ -22,6 +22,7 @@ require('./models/imageModel')
 app.use(express.json({limit: '20mb'}))
 app.use(require('./routes/authRoute'))
 app.use(require('./routes/postRoute'))
+app.use(require('./routes/userRoute'))
 
 app.listen(PORT, () => {
   console.log(`Running on port ${PORT}`)

@@ -5,6 +5,7 @@ import {BrowserRouter, Route, Switch, useHistory} from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './components/screens/Home'
 import Profile from './components/screens/Profile'
+import UserProfile from './components/screens/UserProfile'
 import Login from './components/screens/Login'
 import Signup from './components/screens/Signup'
 import CreatePost from './components/screens/CreatePost'
@@ -29,6 +30,9 @@ const Routing = () => {
       </Route>
       <Route path="/profile">
         <Profile />
+      </Route>
+      <Route exact path="/profile/:userid">
+        <UserProfile />
       </Route>
       <Route path="/login">
         <Login />

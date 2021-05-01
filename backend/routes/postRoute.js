@@ -63,7 +63,7 @@ router.get('/myposts', requireLogin, (req, res) => {
   })
 })
 
-router.get('/api/image/:id', async(req, res) => {
+router.get('/api/image/:id', async (req, res) => {
   const imageId = req.params.id
   const image = await Image.findOne({_id: imageId})
   var fileType = '.' + image.filename.split('.').pop()
@@ -173,7 +173,7 @@ router.put("/comment", requireLogin, async (req, res) => {
   })
 })
 
-router.put("/deletecomment", requireLogin, async(req, res) => {
+router.put("/deletecomment", requireLogin, async (req, res) => {
   Post.findByIdAndUpdate(req.body.postId, {$pull:{comments: {_id: req.body.commentId, postedBy: req.user._id}}}, {new: true})
   .populate("comments.postedBy", "_id username")
   .populate("postedBy", "_id username")
@@ -186,7 +186,7 @@ router.put("/deletecomment", requireLogin, async(req, res) => {
   })
 })
 
-router.delete("/deletepost/:postId", requireLogin, async(req, res) => {
+router.delete("/deletepost/:postId", requireLogin, async (req, res) => {
   Post.findOne({_id: req.params.postId})
   .populate("postedBy", "_id")
   .exec((error, post) => {
