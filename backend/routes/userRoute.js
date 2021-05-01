@@ -11,6 +11,7 @@ router.get('/user/:id', requireLogin, async (req, res) => {
     const foundPosts = await Post.find({postedBy: req.params.id}).populate('postedBy', '_id username').exec()
     return res.json({foundUser, foundPosts})
   } catch(error) {
+    console.log(error)
     return res.json({message: error})
   }
 })

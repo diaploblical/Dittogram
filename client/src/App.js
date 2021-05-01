@@ -28,10 +28,10 @@ const Routing = () => {
       <Route exact path="/">
         <Home />
       </Route>
-      <Route path="/profile">
+      <Route exact path="/profile">
         <Profile />
       </Route>
-      <Route exact path="/profile/:userid">
+      <Route path="/profile/:userid">
         <UserProfile />
       </Route>
       <Route path="/login">

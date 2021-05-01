@@ -25,14 +25,12 @@ const Profile = () => {
     <div className="custom-container">
       <div className="profile">
           <div>
-            <img className="avatar" alt="robot" />
+            <img className="avatar" alt="user's avatar" />
           </div>
           <div>
             <h4>{state ? state.username : "LOADINGU LOADINGU"}</h4>
             <div className="postFollowContainer">
-              <h5>L</h5>
-              <h5>A</h5>
-              <h5>G</h5>
+              <h5>{myPics.length === 1 ? myPics.length + " post" : myPics.length + " posts"}</h5>
             </div>
           </div>
       </div>

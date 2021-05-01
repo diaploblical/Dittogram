@@ -75,3 +75,7 @@
 .material-icons:hover {
   cursor: pointer;
 }
+
+.no-color-link {
+  color: black !important
+}
