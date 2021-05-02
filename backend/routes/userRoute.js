@@ -16,4 +16,32 @@ router.get('/user/:id', requireLogin, async (req, res) => {
   }
 })
 
+router.put('/follow', requireLogin, async (req, res) => {
+  try {
+    let result = await User.findByIdAndUpdate(req.body.followId, {$push:{followers: req.user._id}}, {new: true}, (error, result) => {
+      if (error) {
+        return res.json({message: error})
+      }
+      User.findByIdAndUpdate(req.user._id, {$push:{following: req.body.followId}}, {new: true}).select('-password')
+    }).select('-password')
+    return res.json(result)
+  } catch(error) {
+    return res.json({message: error})
+  }
+})
+
+router.put('/unfollow', requireLogin, async (req, res) => {
+  try {
+    let result = await User.findByIdAndUpdate(req.body.unfollowId, {$pull:{followers: req.user._id}}, {new: true}, (error, result) => {
+      if (error) {
+        return res.json({message: error})
+      }
+      User.findByIdAndUpdate(req.user._id, {$pull:{following: req.body.unfollowId}}, {new: true}).select('-password')
+    }).select('-password')
+    return res.json(result)
+  } catch(error) {
+    return res.json({message: error})
+  }
+})
+
 module.exports = router

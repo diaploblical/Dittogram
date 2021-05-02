@@ -15,7 +15,7 @@ const Home = () => {
             "Authorization": "Bearer " + localStorage.getItem("jwt")
           }
         })
-        setData((await response).data)
+        await setData(response.data)
       } catch(error) {
         M.toast({html: error, classes: "red"})
       }
@@ -121,7 +121,7 @@ const Home = () => {
   return(
     <div className="custom-container">
       {
-        data.map(item => {
+        data ? data.map(item => {
           return(
             <div className="card home-card">         
               <div className="card-image">
@@ -163,7 +163,8 @@ const Home = () => {
               </div>
             </div>
           )
-        })
+        }) : 'no'
+        
       }
     </div>
   )

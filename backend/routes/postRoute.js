@@ -42,25 +42,28 @@ function checkFileType(file) {
 
 router.get('/allposts', requireLogin, async (req, res) => {
   try {
-    const allPosts = await Post.find()
+    let allPosts = await Post.find()
     .populate('postedBy', 'username')
     .populate('comments.postedBy', '_id username')
     .exec()
+    console.log(allPosts)
+    console.log('sadsa')
     return res.json(allPosts)
   } catch(error) {
     return res.json({message: 'An error occurred'})
   }
 })
 
-router.get('/myposts', requireLogin, (req, res) => {
-  Post.find({postedBy:req.user._id})
-  .populate('postedBy', '_id name')
-  .then(myPost => {
-    res.json({myPost})
-  })
-  .catch(error => {
+router.get('/myposts', requireLogin, async (req, res) => {
+  try {
+    let myPosts = await Post.find({postedBy:req.user._id})
+    .populate('postedBy', '_id name')
+    .exec()
+    return res.json(myPosts)
+  } catch (error) {
     console.log(error)
-  })
+    return res.json({message: 'An error occured'})
+  }
 })
 
 router.get('/api/image/:id', async (req, res) => {

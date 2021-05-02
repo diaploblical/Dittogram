@@ -14,7 +14,8 @@ const Profile = () => {
             "Authorization": "Bearer " + localStorage.getItem("jwt")
           }
         })
-        setPics(await response.data.myPost)
+        await setPics(response.data.myPosts)
+        console.log(response)
       } catch(error) {
         console.log(error)
       }
@@ -30,7 +31,8 @@ const Profile = () => {
           <div>
             <h4>{state ? state.username : "LOADINGU LOADINGU"}</h4>
             <div className="postFollowContainer">
-              <h5>{myPics.length === 1 ? myPics.length + " post" : myPics.length + " posts"}</h5>
+              
+              
             </div>
           </div>
       </div>

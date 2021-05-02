@@ -4,7 +4,7 @@ import {useParams} from 'react-router-dom'
 import axios from 'axios'
 
 const UserProfile = () => {
-  const [profile, setProfile] = useState([])
+  const [profile, setProfile] = useState(null)
   const [posts, setPosts] = useState([])
   const {state, dispatch} = useContext(UserContext)
   const {userid} = useParams()
@@ -17,15 +17,38 @@ const UserProfile = () => {
             'Authorization': 'Bearer ' + localStorage.getItem('jwt')
           }
         })
-        console.log(await response.data.foundUser.username)
-        setProfile(await response.data.foundUser)
-        setPosts(await response.data.foundPosts)
+        await setProfile(response.data.foundUser)
+        await setPosts(response.data.foundPosts)
+        return true
       } catch(error) {
         console.log(error)
       }
     }
     getMyPosts()
   },[])
+
+  const followUser = async () => {
+    let response = await axios.put('/follow', {followId: userid}, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      }
+    })
+    dispatch({type: 'UPDATE', payload:{following: response.following, followers: response.followers}})
+    localStorage.setItem('user', JSON.stringify(response.data))
+    console.log(await response)
+  }
+
+  const unfollowUser = async () => {
+    let response = axios.put('/unfollow', {unfollowId: userid}, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+      }
+    })  
+    console.log(await response)
+  }
+
   return(
     <>
     {profile ? 
@@ -36,10 +59,17 @@ const UserProfile = () => {
             </div>
             <div>
               <h4>{profile.username}</h4>
+              {
+                profile.followers ?
+                <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => followUser()}>Follow</button> :
+                <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => unfollowUser()}>Unfollow</button>
+              }
               <div className="postFollowContainer">
                 <h5>{posts.length === 1 ? posts.length + " post" : posts.length + " posts"}</h5>
+                <h5>{profile.followers.length} followers</h5>
+                <h5>{profile.following.length} following</h5>
               </div>
-            </div>
+            </div>      
         </div>
         <div className="gallery">
           {
