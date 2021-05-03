@@ -14,7 +14,7 @@ const Profile = () => {
             "Authorization": "Bearer " + localStorage.getItem("jwt")
           }
         })
-        await setPics(response.data.myPosts)
+        await setPics(response.data)
         console.log(response)
       } catch(error) {
         console.log(error)

@@ -17,14 +17,17 @@ router.get('/user/:id', requireLogin, async (req, res) => {
 })
 
 router.put('/follow', requireLogin, async (req, res) => {
+  
   try {
-    let result = await User.findByIdAndUpdate(req.body.followId, {$push:{followers: req.user._id}}, {new: true}, (error, result) => {
+    let userToFollow = await User.findByIdAndUpdate(req.body.followId, {$push:{followers: req.user._id}}, {new: true}, (error, result) => {
       if (error) {
+        console.log(error)
         return res.json({message: error})
       }
-      User.findByIdAndUpdate(req.user._id, {$push:{following: req.body.followId}}, {new: true}).select('-password')
     }).select('-password')
-    return res.json(result)
+    console.log(userToFollow)
+    let followingUser = await User.findByIdAndUpdate(req.user._id, {$push:{following: req.body.followId}}, {new: true}).select('-password')
+    return res.json({userToFollow, followingUser})
   } catch(error) {
     return res.json({message: error})
   }

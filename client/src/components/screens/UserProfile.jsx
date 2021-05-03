@@ -28,15 +28,20 @@ const UserProfile = () => {
   },[])
 
   const followUser = async () => {
-    let response = await axios.put('/follow', {followId: userid}, {
+    try {
+      let response = await axios.put('/follow', {followId: userid}, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + localStorage.getItem('jwt')
       }
     })
-    dispatch({type: 'UPDATE', payload:{following: response.following, followers: response.followers}})
-    localStorage.setItem('user', JSON.stringify(response.data))
-    console.log(await response)
+    dispatch({type: 'UPDATE', payload:{following: response.data.followingUser.following, followers: response.data.followingUser.followers}})
+    localStorage.setItem('user', JSON.stringify(response.data.followingUser))
+    await setProfile(response.data.userToFollow)
+    console.log(response.data.userToFollow)
+    } catch(error) {
+      console.log(error)
+    }
   }
 
   const unfollowUser = async () => {
