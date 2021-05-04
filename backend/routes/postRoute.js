@@ -46,11 +46,22 @@ router.get('/allposts', requireLogin, async (req, res) => {
     .populate('postedBy', 'username')
     .populate('comments.postedBy', '_id username')
     .exec()
-    console.log(allPosts)
-    console.log('sadsa')
     return res.json(allPosts)
   } catch(error) {
     return res.json({message: 'An error occurred'})
+  }
+})
+
+router.get('/followedposts', requireLogin, async (req, res) => {
+  try {
+    let followedPosts = await Post.find({postedBy:{$in: req.user.following}})
+    .populate('postedBy', 'username')
+    .populate('comments.postedBy', '_id username')
+    .exec()
+    return res.json(followedPosts)
+  } catch(error) {
+    console.log(error)
+    return res.json(error)
   }
 })
 

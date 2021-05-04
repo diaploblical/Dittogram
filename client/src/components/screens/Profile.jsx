@@ -31,8 +31,9 @@ const Profile = () => {
           <div>
             <h4>{state ? state.username : "LOADINGU LOADINGU"}</h4>
             <div className="postFollowContainer">
-              
-              
+              <h5>{myPics.length === 1 ? myPics.length + " post" : myPics.length + " posts"}</h5>
+              <h5>{state ? state.followers.length : "0"} followers</h5>
+              <h5>{state ? state.following.length : "0"} following</h5> 
             </div>
           </div>
       </div>

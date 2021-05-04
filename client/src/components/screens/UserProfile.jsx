@@ -5,9 +5,9 @@ import axios from 'axios'
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null)
-  const [posts, setPosts] = useState([])
   const {state, dispatch} = useContext(UserContext)
   const {userid} = useParams()
+  const [showFollow, setShowFollow] = useState(state?!state.following.includes(userid):true)
   
   useEffect(() => {
     const getMyPosts = async () => {
@@ -17,9 +17,8 @@ const UserProfile = () => {
             'Authorization': 'Bearer ' + localStorage.getItem('jwt')
           }
         })
-        await setProfile(response.data.foundUser)
-        await setPosts(response.data.foundPosts)
-        return true
+        setProfile(response.data)
+        console.log(await profile)
       } catch(error) {
         console.log(error)
       }
@@ -37,21 +36,29 @@ const UserProfile = () => {
     })
     dispatch({type: 'UPDATE', payload:{following: response.data.followingUser.following, followers: response.data.followingUser.followers}})
     localStorage.setItem('user', JSON.stringify(response.data.followingUser))
-    await setProfile(response.data.userToFollow)
     console.log(response.data.userToFollow)
+    await setProfile(response.data.userToFollow)
+    setShowFollow(false)
     } catch(error) {
       console.log(error)
     }
   }
 
   const unfollowUser = async () => {
-    let response = axios.put('/unfollow', {unfollowId: userid}, {
+    try {
+      let response = await axios.put('/unfollow', {unfollowId: userid}, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + localStorage.getItem('jwt')
       }
-    })  
-    console.log(await response)
+    })
+    dispatch({type: 'UPDATE', payload:{following: response.data.unfollowingUser.following, followers: response.data.unfollowingUser.followers}})
+    localStorage.setItem('user', JSON.stringify(response.data.unfollowingUser))
+    await setProfile(response.data.userToUnfollow)
+    setShowFollow(true)
+    } catch(error) {
+      console.log(error)
+    }
   }
 
   return(
@@ -65,20 +72,20 @@ const UserProfile = () => {
             <div>
               <h4>{profile.username}</h4>
               {
-                profile.followers ?
+                showFollow ?
                 <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => followUser()}>Follow</button> :
                 <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => unfollowUser()}>Unfollow</button>
               }
               <div className="postFollowContainer">
-                <h5>{posts.length === 1 ? posts.length + " post" : posts.length + " posts"}</h5>
-                <h5>{profile.followers.length} followers</h5>
-                <h5>{profile.following.length} following</h5>
+                <h5>{profile.foundPosts.length === 1 ? profile.foundPosts.length + " post" : profile.foundPosts.length + " posts"}</h5>
+                <h5>{profile.foundUser.followers.length} followers</h5>
+                <h5>{profile.foundUser.following.length} following</h5>
               </div>
             </div>      
         </div>
         <div className="gallery">
           {
-            posts.map(item => {
+            profile.foundPosts.map(item => {
               return(
                 <img src={`http://localhost:5000/api/image/${item.photo}`} alt={item.title} className="item" />
               )

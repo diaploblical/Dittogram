@@ -8,6 +8,7 @@ const Navbar = () => {
     if (state) {
       return [
         <li><Link to="/profile">Profile</Link></li>,
+        <li><Link to="/feed">Feed</Link></li>,
         <li><Link to="/createpost">Create Post</Link></li>,
         <li><Link to="/login" onClick={() => {localStorage.clear(); dispatch({type: "CLEAR"})}}>Logout</Link></li>,
       ]
