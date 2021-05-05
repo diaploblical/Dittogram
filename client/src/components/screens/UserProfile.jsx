@@ -17,15 +17,14 @@ const UserProfile = () => {
             'Authorization': 'Bearer ' + localStorage.getItem('jwt')
           }
         })
-        setProfile(response.data)
-        console.log(await profile)
+        await setProfile(response.data)
       } catch(error) {
         console.log(error)
       }
     }
     getMyPosts()
   },[])
-
+  console.log(profile)
   const followUser = async () => {
     try {
       let response = await axios.put('/follow', {followId: userid}, {
@@ -36,8 +35,8 @@ const UserProfile = () => {
     })
     dispatch({type: 'UPDATE', payload:{following: response.data.followingUser.following, followers: response.data.followingUser.followers}})
     localStorage.setItem('user', JSON.stringify(response.data.followingUser))
-    console.log(response.data.userToFollow)
-    await setProfile(response.data.userToFollow)
+    console.log(response.data)
+    await setProfile(response.data)
     setShowFollow(false)
     } catch(error) {
       console.log(error)
@@ -54,7 +53,7 @@ const UserProfile = () => {
     })
     dispatch({type: 'UPDATE', payload:{following: response.data.unfollowingUser.following, followers: response.data.unfollowingUser.followers}})
     localStorage.setItem('user', JSON.stringify(response.data.unfollowingUser))
-    await setProfile(response.data.userToUnfollow)
+    await setProfile(response.data.user)
     setShowFollow(true)
     } catch(error) {
       console.log(error)
@@ -77,15 +76,15 @@ const UserProfile = () => {
                 <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => unfollowUser()}>Unfollow</button>
               }
               <div className="postFollowContainer">
-                <h5>{profile.foundPosts.length === 1 ? profile.foundPosts.length + " post" : profile.foundPosts.length + " posts"}</h5>
-                <h5>{profile.foundUser.followers.length} followers</h5>
-                <h5>{profile.foundUser.following.length} following</h5>
+                <h5>{profile.posts.length === 1 ? profile.posts.length + " post" : profile.posts.length + " posts"}</h5>
+                <h5>{profile.user.followers.length} followers</h5>
+                <h5>{profile.user.following.length} following</h5>
               </div>
             </div>      
         </div>
         <div className="gallery">
           {
-            profile.foundPosts.map(item => {
+            profile.posts.map(item => {
               return(
                 <img src={`http://localhost:5000/api/image/${item.photo}`} alt={item.title} className="item" />
               )

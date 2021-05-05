@@ -15,13 +15,13 @@ const Profile = () => {
           }
         })
         await setPics(response.data)
-        console.log(response)
       } catch(error) {
         console.log(error)
       }
     }
     getMyPosts()
   },[])
+  
   return(
     <div className="custom-container">
       <div className="profile">
