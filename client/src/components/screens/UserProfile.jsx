@@ -7,7 +7,7 @@ const UserProfile = () => {
   const [profile, setProfile] = useState(null)
   const {state, dispatch} = useContext(UserContext)
   const {userid} = useParams()
-  const [showFollow, setShowFollow] = useState(state ? state.following.includes(userid) : true)
+  const [showFollow, setShowFollow] = useState(state ? !state.following.includes(userid) : true)
   
   useEffect(() => {
     const getMyPosts = async () => {
@@ -55,13 +55,11 @@ const UserProfile = () => {
       })
       dispatch({type: 'UPDATE', payload:{following: response.data.following, followers: response.data.followers}})
       localStorage.setItem('user', JSON.stringify(response.data))
-      console.log(response)
       setProfile((prevState)=>{
         const newFollower = (prevState.user.followers.filter(item => item !== response.data._id))
         return {...prevState, user:{...prevState.user, followers: newFollower}
         }
       })
-      console.log(profile)
       setShowFollow(true)   
     } catch(error) {
       console.log(error)
@@ -73,22 +71,22 @@ const UserProfile = () => {
     {profile ? 
       <div className="custom-container">
         <div className="profile">
-            <div>
-              <img className="avatar" alt="robot" />
+          <div>
+          <img className="avatar" src={profile.user.avatar} alt="user's avatar" />
+          </div>
+          <div>
+            <h4>{profile.username}</h4>
+            {
+              showFollow ?
+              <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => followUser()}>Follow</button> :
+              <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => unfollowUser()}>Unfollow</button>
+            }
+            <div className="postFollowContainer">
+              <h5>{profile.posts.length === 1 ? profile.posts.length + " post" : profile.posts.length + " posts"}</h5>
+              <h5>{profile.user.followers.length} followers</h5>
+              <h5>{profile.user.following.length} following</h5>
             </div>
-            <div>
-              <h4>{profile.username}</h4>
-              {
-                showFollow ?
-                <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => followUser()}>Follow</button> :
-                <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => unfollowUser()}>Unfollow</button>
-              }
-              <div className="postFollowContainer">
-                <h5>{profile.posts.length === 1 ? profile.posts.length + " post" : profile.posts.length + " posts"}</h5>
-                <h5>{profile.user.followers.length} followers</h5>
-                <h5>{profile.user.following.length} following</h5>
-              </div>
-            </div>      
+          </div>
         </div>
         <div className="gallery">
           {

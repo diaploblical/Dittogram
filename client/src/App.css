@@ -79,3 +79,7 @@
 .no-color-link {
   color: black !important
 }
+
+.hidden-div {
+  display: none;
+}

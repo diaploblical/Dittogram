@@ -21,7 +21,6 @@ const Signup = () => {
             "Content-Type": "application/json"
           }
         })
-        console.log(response)
         M.toast({html: response.data.message, classes: "green"})
         let secondResponse = await axios.post("/login", {email, password}, {
           headers: {

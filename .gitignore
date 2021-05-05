@@ -25,3 +25,4 @@ yarn-error.log*
 *.lock
 package-lock.json
 /backend/uploads
+assets
