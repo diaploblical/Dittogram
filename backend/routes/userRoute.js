@@ -18,9 +18,9 @@ router.get('/user/:id', requireLogin, async (req, res) => {
 
 router.put('/follow', requireLogin, async (req, res) => {
   try {
-    let user = await User.findByIdAndUpdate(req.body.followId, {$push:{followers: req.user._id}}, {new: true}).select('-password')
-    let followingUser = await User.findByIdAndUpdate(req.user._id, {$push:{following: req.body.followId}}, {new: true}).select('-password')
-    return res.json({user, followingUser})
+    await User.findByIdAndUpdate(req.body.followId, {$push:{followers: req.user._id}}, {new: true}).select('-password')
+    let user = await User.findByIdAndUpdate(req.user._id, {$push:{following: req.body.followId}}, {new: true}).select('-password')
+    return res.json(user)
   } catch(error) {
     console.log(error)
     return res.json({message: error})
@@ -29,9 +29,9 @@ router.put('/follow', requireLogin, async (req, res) => {
 
 router.put('/unfollow', requireLogin, async (req, res) => {
   try {
-    let user = await User.findByIdAndUpdate(req.body.unfollowId, {$pull:{followers: req.user._id}}, {new: true}).select('-password')
-    let unfollowingUser = await User.findByIdAndUpdate(req.user._id, {$pull:{following: req.body.unfollowId}}, {new: true}).select('-password')
-    return res.json({user, unfollowingUser})
+    await User.findByIdAndUpdate(req.body.unfollowId, {$pull:{followers: req.user._id}}, {new: true}).select('-password')
+    let user = await User.findByIdAndUpdate(req.user._id, {$pull:{following: req.body.unfollowId}}, {new: true}).select('-password')
+    return res.json(user)
   } catch(error) {
     console.log(error)
     return res.json({message: error})

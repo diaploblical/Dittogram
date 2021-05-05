@@ -7,7 +7,7 @@ const UserProfile = () => {
   const [profile, setProfile] = useState(null)
   const {state, dispatch} = useContext(UserContext)
   const {userid} = useParams()
-  const [showFollow, setShowFollow] = useState(state?!state.following.includes(userid):true)
+  const [showFollow, setShowFollow] = useState(state ? state.following.includes(userid) : true)
   
   useEffect(() => {
     const getMyPosts = async () => {
@@ -17,27 +17,29 @@ const UserProfile = () => {
             'Authorization': 'Bearer ' + localStorage.getItem('jwt')
           }
         })
-        await setProfile(response.data)
+        setProfile(response.data)
       } catch(error) {
         console.log(error)
-      }
+      }    
     }
     getMyPosts()
   },[])
-  console.log(profile)
+
   const followUser = async () => {
     try {
       let response = await axios.put('/follow', {followId: userid}, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-      }
-    })
-    dispatch({type: 'UPDATE', payload:{following: response.data.followingUser.following, followers: response.data.followingUser.followers}})
-    localStorage.setItem('user', JSON.stringify(response.data.followingUser))
-    console.log(response.data)
-    await setProfile(response.data)
-    setShowFollow(false)
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+        }
+      })
+      dispatch({type: 'UPDATE', payload:{following: response.data.following, followers: response.data.followers}})
+      localStorage.setItem('user', JSON.stringify(response.data))
+      setProfile((prevState)=>{
+        return {...prevState, user: {...prevState.user, followers: [...prevState.user.followers, response.data._id]}
+        }
+      })
+      setShowFollow(false)
     } catch(error) {
       console.log(error)
     }
@@ -46,15 +48,21 @@ const UserProfile = () => {
   const unfollowUser = async () => {
     try {
       let response = await axios.put('/unfollow', {unfollowId: userid}, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-      }
-    })
-    dispatch({type: 'UPDATE', payload:{following: response.data.unfollowingUser.following, followers: response.data.unfollowingUser.followers}})
-    localStorage.setItem('user', JSON.stringify(response.data.unfollowingUser))
-    await setProfile(response.data.user)
-    setShowFollow(true)
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+        }
+      })
+      dispatch({type: 'UPDATE', payload:{following: response.data.following, followers: response.data.followers}})
+      localStorage.setItem('user', JSON.stringify(response.data))
+      console.log(response)
+      setProfile((prevState)=>{
+        const newFollower = (prevState.user.followers.filter(item => item !== response.data._id))
+        return {...prevState, user:{...prevState.user, followers: newFollower}
+        }
+      })
+      console.log(profile)
+      setShowFollow(true)   
     } catch(error) {
       console.log(error)
     }
