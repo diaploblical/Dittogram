@@ -33,7 +33,7 @@ const UserProfile = () => {
           'Authorization': 'Bearer ' + localStorage.getItem('jwt')
         }
       })
-      dispatch({type: 'UPDATE', payload:{following: response.data.following, followers: response.data.followers}})
+      dispatch({type: 'UPDATE-FOLLOWERS', payload:{following: response.data.following, followers: response.data.followers}})
       localStorage.setItem('user', JSON.stringify(response.data))
       setProfile((prevState)=>{
         return {...prevState, user: {...prevState.user, followers: [...prevState.user.followers, response.data._id]}
@@ -53,7 +53,7 @@ const UserProfile = () => {
           'Authorization': 'Bearer ' + localStorage.getItem('jwt')
         }
       })
-      dispatch({type: 'UPDATE', payload:{following: response.data.following, followers: response.data.followers}})
+      dispatch({type: 'UPDATE-FOLLOWERS', payload:{following: response.data.following, followers: response.data.followers}})
       localStorage.setItem('user', JSON.stringify(response.data))
       setProfile((prevState)=>{
         const newFollower = (prevState.user.followers.filter(item => item !== response.data._id))

@@ -15,8 +15,8 @@ const userSchema = new mongoose.Schema({
     required: true
   },
   avatar: {
-    type: String,
-    default: 'http://localhost:5000/assets/default.png'
+    type: ObjectId,
+    ref: 'Image',
   },
   followers: [
     {

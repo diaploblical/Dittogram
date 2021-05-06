@@ -38,4 +38,13 @@ router.put('/unfollow', requireLogin, async (req, res) => {
   }
 })
 
+router.put('/setavatar', requireLogin, async (req, res) => {
+  try {
+    let user = await User.findByIdAndUpdate(req.user._id, {avatar: req.body.avatarId}, {new: true}).select('-password')
+    return res.json(user)
+  } catch(error) {
+    console.log('sadasd')
+  } 
+})
+
 module.exports = router

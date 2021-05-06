@@ -6,24 +6,35 @@ import M from 'materialize-css'
 const Profile = () => {
   const [myPics, setPics] = useState([])
   const {state, dispatch} = useContext(UserContext)
-  const [avatar, setAvatar] = useState('')
-  const [url, setUrl] = useState('')
+  const [image, setImage] = useState('')
+  const localhost = 'http://localhost:5000'
   
   const uploadAvatar = async () => {
     const formData = new FormData()
     try {
-      formData.append('file', avatar, avatar.name)
+      formData.append('file', image, image.name)
       let response = await axios.post('/imageupload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': 'Bearer ' + localStorage.getItem('jwt'),
-          'Filename': avatar.name
+          'Filename': image.name
         }
       })
-      M.toast({html: response.data.message, classes: 'green'})
-      setUrl(response.data.photo)
+      console.log(response)
+      if (response.data.photo) {
+        const passedPhoto = response.data.photo.split('.').shift()
+        let secondResponse = await axios.put('/setavatar', {avatarId: passedPhoto}, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+          }
+        })
+        console.log(secondResponse.data)
+        localStorage.setItem('user', JSON.stringify(secondResponse.data))
+        dispatch({type: 'UPDATE-AVATAR', payload:{avatar: secondResponse.data.avatar}})
+      }
     } catch(error) {
-      M.toast({html: error.response.data.message, classes: 'red'})
+      console.log(error)
     }
   }
 
@@ -47,15 +58,26 @@ const Profile = () => {
     <div className='custom-container'>
       <div className='profile'>
         <div>
-          <img className='avatar' src={state ? state.avatar : 'loading...'} alt="user's avatar" />
+          <img className='avatar' src={state.avatar ? `${localhost}/api/image/${state.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
           <div className='file-field input-field'>
             <div className='btn waves-effect waves-light blue'>
-              <span id='fileSpan'>File</span>
-              <input type='file' id ='file' onChange={(e)=>setAvatar(e.target.files[0])}/>
-              
+              <span id='fileSpan'>Select Avatar</span>
+              <input type='file' 
+                onChange={(e)=> {
+                    setImage(e.target.files[0])
+                    document.querySelector('#fileSpan').innerHTML = 'Upload Avatar'
+                  }
+                }
+                onClick={(e) => {
+                  if (image) {
+                    e.preventDefault()
+                    uploadAvatar()
+                  }
+                }}
+              />
             </div>
           <div className='file-path-wrapper'>
-            <input className='file-path validate' type='text' />
+            <input className='file-path validate hidden' type='text' />
           </div>
       </div>
       </div>

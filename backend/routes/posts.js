@@ -77,6 +77,10 @@ router.get('/myposts', requireLogin, async (req, res) => {
   }
 })
 
+router.get('/defaultavatar', async (req, res) => {
+  return res.sendFile(path.join(__dirname, '..', '/assets/default.png'))
+})
+
 router.get('/api/image/:id', async (req, res) => {
   const imageId = req.params.id
   const image = await Image.findOne({_id: imageId})
