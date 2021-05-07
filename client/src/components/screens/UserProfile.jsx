@@ -8,6 +8,7 @@ const UserProfile = () => {
   const {state, dispatch} = useContext(UserContext)
   const {userid} = useParams()
   const [showFollow, setShowFollow] = useState(state ? !state.following.includes(userid) : true)
+  const localhost = 'http://localhost:5000'
   
   useEffect(() => {
     const getMyPosts = async () => {
@@ -22,6 +23,7 @@ const UserProfile = () => {
         console.log(error)
       }    
     }
+    console.log(profile)
     getMyPosts()
   },[])
 
@@ -72,10 +74,10 @@ const UserProfile = () => {
       <div className="custom-container">
         <div className="profile">
           <div>
-          <img className="avatar" src={profile.user.avatar} alt="user's avatar" />
+          <img className='avatar' src={profile.user.avatar ? `${localhost}/api/image/${profile.user.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
           </div>
           <div>
-            <h4>{profile.username}</h4>
+            <h4>{profile.user.username}</h4>
             {
               showFollow ?
               <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => followUser()}>Follow</button> :

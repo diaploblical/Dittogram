@@ -101,23 +101,6 @@ const Feed = () => {
       console.log(error)
     }
   }
-  const deletePost = async (postId) => {
-    let response = await axios.delete(`/deletepost/${postId}`, {
-      headers: {
-        "Authorization": "Bearer " + localStorage.getItem("jwt")
-      }
-    })
-    try {
-      const newData = data.filter(item => {
-        return item._id !== response._id
-      })
-      console.log(await response)
-      M.toast({html: await response.data.message, classes: "green"})
-      setData(newData)
-    } catch(error) {
-      console.log(error)
-    }
-  }
   return(
     <div className="custom-container">
       {

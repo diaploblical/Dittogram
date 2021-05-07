@@ -7,15 +7,15 @@ const Navbar = () => {
   const renderList = () => {
     if (state) {
       return [
-        <li><Link to="/profile">Profile</Link></li>,
-        <li><Link to="/feed">Feed</Link></li>,
-        <li><Link to="/createpost">Create Post</Link></li>,
-        <li><Link to="/login" onClick={() => {localStorage.clear(); dispatch({type: "CLEAR"})}}>Logout</Link></li>,
+        <li key='profile'><Link to="/profile">Profile</Link></li>,
+        <li key='feed'><Link to="/feed">Feed</Link></li>,
+        <li key='createpost'><Link to="/createpost">Create Post</Link></li>,
+        <li key='logout'><Link to="/login" onClick={() => {localStorage.clear(); dispatch({type: "CLEAR"})}}>Logout</Link></li>,
       ]
     } else {
       return [
-        <li><Link to="/login">Login</Link></li>,
-        <li><Link to="/signup">Signup</Link></li>
+        <li key='login'><Link to="/login">Login</Link></li>,
+        <li key='signup'><Link to="/signup">Signup</Link></li>
       ]
     }
   }

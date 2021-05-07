@@ -1,7 +1,8 @@
-import React, {useEffect, createContext, useReducer, useContext} from 'react'
 import './App.css';
 import './materialize/css/materialize.min.css'
+import React, {useEffect, createContext, useReducer, useContext} from 'react'
 import {BrowserRouter, Route, Switch, useHistory} from 'react-router-dom'
+import {reducer, initialState} from './reducers/userReducer'
 import Navbar from './components/Navbar'
 import Home from './components/screens/Home'
 import Profile from './components/screens/Profile'
@@ -10,12 +11,11 @@ import Login from './components/screens/Login'
 import Signup from './components/screens/Signup'
 import CreatePost from './components/screens/CreatePost'
 import Feed from './components/screens/Feed'
-import {reducer, initialState} from './reducers/userReducer'
 export const UserContext = createContext()
 
 const Routing = () => {
   const history = useHistory()
-  const {state, dispatch} = useContext(UserContext)
+  const {dispatch} = useContext(UserContext)
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"))
     if (user) {
