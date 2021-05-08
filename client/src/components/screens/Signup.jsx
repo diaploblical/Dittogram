@@ -5,8 +5,8 @@ import {UserContext} from '../../App'
 import M from 'materialize-css'
 
 const Signup = () => {
-  const {state, dispatch} = useContext(UserContext)
-  const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  const {dispatch} = useContext(UserContext)
+  const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   const history = useHistory()
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")

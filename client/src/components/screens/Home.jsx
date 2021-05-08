@@ -6,7 +6,8 @@ import M from 'materialize-css'
 
 const Home = () => {
   const [data, setData] = useState([])
-  const {state, dispatch} = useContext(UserContext)
+  const {state} = useContext(UserContext)
+
   useEffect(() => {
     const getAllPosts = async () => {
       try {
@@ -22,6 +23,7 @@ const Home = () => {
     }
     getAllPosts() 
   },[])
+
   const likePost = async (id) => {
     let response = await axios.put("/like", {postId: id}, {
       headers: {
@@ -42,6 +44,7 @@ const Home = () => {
       console.log(error)
     }
   }
+
   const unlikePost = async (id) => {
     let response = await axios.put("/unlike", {postId: id}, {
       headers: {
@@ -62,6 +65,7 @@ const Home = () => {
       console.log(error)
     }
   }
+
   const makeComment = async (text, postId) => {
     let response = await axios.put("/comment", {text, postId}, {
       headers: {
@@ -82,6 +86,7 @@ const Home = () => {
       console.log(error)
     }
   }
+
   const deleteComment = async (postId, commentId) => {
     let response = await axios.put("/deletecomment", {postId, commentId}, {
       headers: {
@@ -101,6 +106,7 @@ const Home = () => {
       console.log(error)
     }
   }
+
   const deletePost = async (postId) => {
     let response = await axios.delete(`/deletepost/${postId}`, {
       headers: {
@@ -111,26 +117,26 @@ const Home = () => {
       const newData = data.filter(item => {
         return item._id !== response._id
       })
-      console.log(await response)
       M.toast({html: await response.data.message, classes: "green"})
       setData(newData)
     } catch(error) {
       console.log(error)
     }
   }
+
   return(
     <div className="custom-container">
       {
         data ? data.map(item => {
           return(
-            <div className="card home-card">         
+            <div key={item._id} className="card home-card">         
               <div className="card-image">
                 <h4><Link to={item.postedBy._id !== state._id ? `/profile/${item.postedBy._id}` : '/profile'}>{item.postedBy.username}</Link>
                 {item.postedBy._id === state._id && 
                   <i style={{float: "right"}} className="material-icons" onClick={() => deletePost(item._id)}>delete</i>
                 }
                 </h4>
-                <img src={`http://localhost:5000/api/image/${item.photo}`} alt="NIGAGHONE"/>
+                <img src={`http://localhost:5000/api/image/${item.photo}`} alt={item.photo}/>
               </div>
               <div className="card-content">
                 <i className="material-icons mi-margins">favorite</i>
@@ -164,7 +170,6 @@ const Home = () => {
             </div>
           )
         }) : 'no'
-        
       }
     </div>
   )

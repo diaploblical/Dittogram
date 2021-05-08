@@ -4,7 +4,7 @@ import axios from 'axios'
 
 const Profile = () => {
   const [myPics, setPics] = useState([])
-  const {state, dispatch} = useContext(UserContext)
+  const {dispatch} = useContext(UserContext)
   const [image, setImage] = useState('')
   const profile = JSON.parse(localStorage.getItem('user'))
   const localhost = 'http://localhost:5000'
@@ -20,7 +20,6 @@ const Profile = () => {
           'Filename': image.name
         }
       })
-      console.log(response)
       if (response.data.photo) {
         const passedPhoto = response.data.photo.split('.').shift()
         let secondResponse = await axios.put('/setavatar', {avatarId: passedPhoto}, {
@@ -29,7 +28,6 @@ const Profile = () => {
             'Authorization': 'Bearer ' + localStorage.getItem('jwt')
           }
         })
-        console.log(secondResponse.data)
         localStorage.setItem('user', JSON.stringify(secondResponse.data))
         dispatch({type: 'UPDATE-AVATAR', payload:{avatar: secondResponse.data.avatar}})
       }
@@ -93,7 +91,6 @@ const Profile = () => {
       <div className='gallery'>
         {
           myPics.map(item => {
-            console.log(state)
             return(
               <img key={item._id}src={`http://localhost:5000/api/image/${item.photo}`} alt={item.title} className='item' />
             )

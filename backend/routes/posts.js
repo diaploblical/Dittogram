@@ -3,12 +3,14 @@ const Formidable = require('formidable')
 const router = express.Router()
 const bluebird = require('bluebird')
 const fs = bluebird.promisifyAll(require('fs'))
+const fsPromises = require('fs').promises
 const mongoose = require('mongoose')
 const Post = mongoose.model('Post')
 const Image = mongoose.model('Image')
 const requireLogin = require('../middleware/requireLogin')
 const path = require('path')
 const {join} = require('path')
+const uploadsFolder = join(__dirname, '/../uploads')
 
 /*This function checks to see if a directory for file uploads already exists. 
 If it does not exist the function will create it. */
@@ -42,10 +44,7 @@ function checkFileType(file) {
 
 router.get('/allposts', requireLogin, async (req, res) => {
   try {
-    let allPosts = await Post.find()
-    .populate('postedBy', 'username')
-    .populate('comments.postedBy', '_id username')
-    .exec()
+    let allPosts = await Post.find().populate('postedBy', 'username').populate('comments.postedBy', '_id username')
     return res.json(allPosts)
   } catch(error) {
     return res.json({message: 'An error occurred'})
@@ -58,6 +57,9 @@ router.get('/followedposts', requireLogin, async (req, res) => {
     .populate('postedBy', 'username')
     .populate('comments.postedBy', '_id username')
     .exec()
+    if (followedPosts == null) {
+      return res.json(null)
+    }
     return res.json(followedPosts)
   } catch(error) {
     console.log(error)
@@ -93,7 +95,6 @@ router.get('/api/image/:id', async (req, res) => {
 
 router.post('/imageupload', requireLogin, async (req, res) => {
   const form = Formidable.IncomingForm()
-  const uploadsFolder = join(__dirname, '/../uploads')
   const folderExists = await checkCreateUploadsFolder(uploadsFolder)
   if (!folderExists) {
     return res.json({message: 'There was an error with creating the uploads folder'})
@@ -150,8 +151,8 @@ router.post('/createpost', requireLogin, async (req, res) => {
 
 router.put('/like', requireLogin, async (req, res) => {
   Post.findByIdAndUpdate(req.body.postId, {$push:{likes: req.user._id}}, {new: true})
-  .populate("comments.postedBy", "_id username")
-  .populate("postedBy", "_id username")
+  .populate('comments.postedBy', '_id username')
+  .populate('postedBy', '_id username')
   .exec((error, result) => {
     if (error) {
       return res.json({message: error})
@@ -161,10 +162,10 @@ router.put('/like', requireLogin, async (req, res) => {
   })
 })
 
-router.put("/unlike", requireLogin, async (req, res) => {
+router.put('/unlike', requireLogin, async (req, res) => {
   Post.findByIdAndUpdate(req.body.postId, {$pull:{likes: req.user._id}}, {new: true})
-  .populate("comments.postedBy", "_id username")
-  .populate("postedBy", "_id username")
+  .populate('comments.postedBy', '_id username')
+  .populate('postedBy', '_id username')
   .exec((error, result) => {
     if (error) {
       return res.json({message: error})
@@ -174,14 +175,14 @@ router.put("/unlike", requireLogin, async (req, res) => {
   })
 })
 
-router.put("/comment", requireLogin, async (req, res) => {
+router.put('/comment', requireLogin, async (req, res) => {
   const comment = {
     text: req.body.text,
     postedBy: req.user.id
   }
   Post.findByIdAndUpdate(req.body.postId, {$push:{comments: comment}}, {new: true})
-  .populate("comments.postedBy", "_id username")
-  .populate("postedBy", "_id username")
+  .populate('comments.postedBy', '_id username')
+  .populate('postedBy', '_id username')
   .exec((error, result) => {
     if (error) {
       return res.json({message: error})
@@ -191,35 +192,34 @@ router.put("/comment", requireLogin, async (req, res) => {
   })
 })
 
-router.put("/deletecomment", requireLogin, async (req, res) => {
-  Post.findByIdAndUpdate(req.body.postId, {$pull:{comments: {_id: req.body.commentId, postedBy: req.user._id}}}, {new: true})
-  .populate("comments.postedBy", "_id username")
-  .populate("postedBy", "_id username")
-  .exec((error, result) => {
-    if (error) {
-      return res.json({message: error})
-    } else {
-      return res.json(result)
-    }
-  })
+router.put('/deletecomment', requireLogin, async (req, res) => {
+  try {
+    let post = await Post.findByIdAndUpdate(req.body.postId, {$pull:{comments: {_id: req.body.commentId, postedBy: req.user._id}}}, {new: true})
+    .populate('comments.postedBy', '_id username')
+    .populate('postedBy', '_id username')
+    .exec()
+    return res.json(post)
+  } catch(error) {
+    console.log(error)
+    res.json(error)
+  }
 })
 
-router.delete("/deletepost/:postId", requireLogin, async (req, res) => {
-  Post.findOne({_id: req.params.postId})
-  .populate("postedBy", "_id")
-  .exec((error, post) => {
-    if (error || !post) {
-      return res.json({message: error})
-    }
+router.delete('/deletepost/:postId', requireLogin, async (req, res) => {
+  try {
+    let post = await Post.findOne({_id: req.params.postId})
+    let image = await Image.findOne({_id: post.photo})
+    let filename = ('/' + image._id + '.' + image.filename.split('.').pop())
     if (post.postedBy._id.toString() === req.user._id.toString()) {
-      try {
-        post.remove()
-        return res.json({message: "Post successfully deleted", item: post})
-      } catch(error) {
-        return res.json({message: error})
-      }
+      await fsPromises.unlink(uploadsFolder + filename)
+      post.remove()
+      image.remove()
+      return res.json({message: "Post successfully deleted", item: post})
     }
-  })
+  } catch(error) {
+    console.log(error)
+    res.json(error)
+  }
 })
 
 module.exports = router

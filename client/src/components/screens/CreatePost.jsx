@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import M from 'materialize-css'
@@ -22,7 +23,7 @@ const CreatePost = () => {
       } 
     }
     createPost()
-  },[photo])
+  }, [photo])
 
   const postDetails = async () => {
     const formData = new FormData()

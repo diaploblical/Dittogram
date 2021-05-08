@@ -14,6 +14,7 @@ mongoose.connection.on('connected', () => {
 mongoose.connection.on('error', (err) => {
   console.log('error connecting to the server', err)
 })
+mongoose.set('useFindAndModify', false);
 
 require('./models/user')
 require('./models/post')

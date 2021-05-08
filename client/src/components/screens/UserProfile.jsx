@@ -1,13 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState, useContext} from 'react'
 import { UserContext } from '../../App'
 import {useParams} from 'react-router-dom'
 import axios from 'axios'
 
 const UserProfile = () => {
-  const [profile, setProfile] = useState(null)
-  const {state, dispatch} = useContext(UserContext)
+  const [userProfile, setUserProfile] = useState(null)
+  const profile = JSON.parse(localStorage.getItem('user'))
+  const {dispatch} = useContext(UserContext)
   const {userid} = useParams()
-  const [showFollow, setShowFollow] = useState(state ? !state.following.includes(userid) : true)
+  const [showFollow, setShowFollow] = useState(profile ? !profile.following.includes(userid) : true)
   const localhost = 'http://localhost:5000'
   
   useEffect(() => {
@@ -18,13 +20,13 @@ const UserProfile = () => {
             'Authorization': 'Bearer ' + localStorage.getItem('jwt')
           }
         })
-        setProfile(response.data)
+        setUserProfile(response.data)
       } catch(error) {
         console.log(error)
       }    
     }
     getMyPosts()
-  },[])
+  }, [])
 
   const followUser = async () => {
     try {
@@ -36,7 +38,7 @@ const UserProfile = () => {
       })
       dispatch({type: 'UPDATE-FOLLOWERS', payload:{following: response.data.following, followers: response.data.followers}})
       localStorage.setItem('user', JSON.stringify(response.data))
-      setProfile((prevState)=>{
+      setUserProfile((prevState)=>{
         return {...prevState, user: {...prevState.user, followers: [...prevState.user.followers, response.data._id]}
         }
       })
@@ -56,7 +58,7 @@ const UserProfile = () => {
       })
       dispatch({type: 'UPDATE-FOLLOWERS', payload:{following: response.data.following, followers: response.data.followers}})
       localStorage.setItem('user', JSON.stringify(response.data))
-      setProfile((prevState)=>{
+      setUserProfile((prevState)=>{
         const newFollower = (prevState.user.followers.filter(item => item !== response.data._id))
         return {...prevState, user:{...prevState.user, followers: newFollower}
         }
@@ -69,32 +71,31 @@ const UserProfile = () => {
 
   return(
     <>
-    {profile ? 
+    {userProfile ? 
       <div className="custom-container">
         <div className="profile">
           <div>
-          <img className='avatar' src={profile.user.avatar ? `${localhost}/api/image/${profile.user.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
+          <img className='avatar' src={userProfile.user.avatar ? `${localhost}/api/image/${userProfile.user.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
           </div>
           <div>
-            <h4>{profile.user.username}</h4>
+            <h4>{userProfile.user.username}</h4>
             {
               showFollow ?
               <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => followUser()}>Follow</button> :
               <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => unfollowUser()}>Unfollow</button>
             }
             <div className="postFollowContainer">
-              <h5>{profile.posts.length === 1 ? profile.posts.length + " post" : profile.posts.length + " posts"}</h5>
-              <h5>{profile.user.followers.length} followers</h5>
-              <h5>{profile.user.following.length} following</h5>
+              <h5>{userProfile.posts.length === 1 ? userProfile.posts.length + " post" : userProfile.posts.length + " posts"}</h5>
+              <h5>{userProfile.user.followers.length} followers</h5>
+              <h5>{userProfile.user.following.length} following</h5>
             </div>
           </div>
         </div>
         <div className="gallery">
           {
-            profile.posts.map(item => {
-              console.log(state)
+            userProfile.posts.map(item => {
               return(
-                <img src={`http://localhost:5000/api/image/${item.photo}`} alt={item.title} className="item" />
+                <img key={item._id} src={`http://localhost:5000/api/image/${item.photo}`} alt={item.title} className="item" />
               )
             })
           }
