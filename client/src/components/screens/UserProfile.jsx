@@ -23,7 +23,6 @@ const UserProfile = () => {
         console.log(error)
       }    
     }
-    console.log(profile)
     getMyPosts()
   },[])
 
@@ -93,6 +92,7 @@ const UserProfile = () => {
         <div className="gallery">
           {
             profile.posts.map(item => {
+              console.log(state)
               return(
                 <img src={`http://localhost:5000/api/image/${item.photo}`} alt={item.title} className="item" />
               )

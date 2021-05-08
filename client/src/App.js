@@ -17,34 +17,34 @@ const Routing = () => {
   const history = useHistory()
   const {dispatch} = useContext(UserContext)
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"))
+    const user = JSON.parse(localStorage.getItem('user'))
     if (user) {
-      dispatch({type: "USER", payload: user})
+      dispatch({type: 'USER', payload: user})
     } else {
       history.push('/login')
     }
   }, [])
   return(
     <Switch>
-      <Route exact path="/">
+      <Route exact path='/'>
         <Home />
       </Route>
-      <Route exact path="/profile">
+      <Route exact path='/profile'>
         <Profile />
       </Route>
-      <Route path="/profile/:userid">
+      <Route path='/profile/:userid'>
         <UserProfile />
       </Route>
-      <Route path="/login">
+      <Route path='/login'>
         <Login />
       </Route>
-      <Route path="/signup">
+      <Route path='/signup'>
         <Signup />
       </Route>
-      <Route path="/createpost">
+      <Route path='/createpost'>
         <CreatePost />
       </Route>
-      <Route path="/feed">
+      <Route path='/feed'>
         <Feed />
       </Route>
     </Switch>

@@ -12,8 +12,12 @@ const Signup = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const postData = async () => {
-    if (!emailRegex.test(email)) {
-      M.toast({html: "Invalid email address", classes: "red"})
+    if (username.length < 4) {
+      M.toast({html: 'Username length must be 4 characters or longer', classes: "red"})
+    } else if (!emailRegex.test(email)) {
+      M.toast({html: 'Invalid email address', classes: "red"})
+    } else if (password.length < 8) {
+      M.toast({html: 'Password length must be 8 characters or longer', classes: "red"})
     } else {
       try {
         let response = await axios.post("/signup", {username, email, password}, {
@@ -35,7 +39,7 @@ const Signup = () => {
       } catch(error) {
         return M.toast({html: error.response.data.message, classes: "red"})
       }
-    } 
+    }
   }
 
   return(

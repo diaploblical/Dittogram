@@ -1,12 +1,12 @@
 import React, {useEffect, useState, useContext} from 'react'
 import { UserContext } from '../../App'
 import axios from 'axios'
-import M from 'materialize-css'
 
 const Profile = () => {
   const [myPics, setPics] = useState([])
   const {state, dispatch} = useContext(UserContext)
   const [image, setImage] = useState('')
+  const profile = JSON.parse(localStorage.getItem('user'))
   const localhost = 'http://localhost:5000'
   
   const uploadAvatar = async () => {
@@ -46,19 +46,19 @@ const Profile = () => {
             'Authorization': 'Bearer ' + localStorage.getItem('jwt')
           }
         })
-        await setPics(response.data)
+        await setPics(response.data)       
       } catch(error) {
         console.log(error)
       }
     }
     getMyPosts()
   },[])
-  
+
   return(
     <div className='custom-container'>
       <div className='profile'>
         <div>
-          <img className='avatar' src={state.avatar ? `${localhost}/api/image/${state.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
+          <img className='avatar' src={profile.avatar ? `${localhost}/api/image/${profile.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
           <div className='file-field input-field'>
             <div className='btn waves-effect waves-light blue'>
               <span id='fileSpan'>Select Avatar</span>
@@ -82,17 +82,18 @@ const Profile = () => {
       </div>
       </div>
         <div>
-          <h4>{state ? state.username : 'LOADINGU LOADINGU'}</h4>
+          <h4>{profile ? profile.username : 'LOADINGU LOADINGU'}</h4>
           <div className='postFollowContainer'>
             <h5>{myPics.length === 1 ? myPics.length + ' post' : myPics.length + ' posts'}</h5>
-            <h5>{state ? state.followers.length : '0'} followers</h5>
-            <h5>{state ? state.following.length : '0'} following</h5> 
+            <h5>{profile ? profile.followers.length : '0'} followers</h5>
+            <h5>{profile ? profile.following.length : '0'} following</h5>
           </div>
         </div>
       </div>
       <div className='gallery'>
         {
           myPics.map(item => {
+            console.log(state)
             return(
               <img key={item._id}src={`http://localhost:5000/api/image/${item.photo}`} alt={item.title} className='item' />
             )
