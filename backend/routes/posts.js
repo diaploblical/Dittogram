@@ -209,7 +209,11 @@ router.delete('/deletepost/:postId', requireLogin, async (req, res) => {
   try {
     let post = await Post.findOne({_id: req.params.postId})
     let image = await Image.findOne({_id: post.photo})
-    let filename = ('/' + image._id + '.' + image.filename.split('.').pop())
+    var fileType = '.' + image.filename.split('.').pop()
+    if (fileType == '.jpg') {
+      fileType = '.jpeg'
+    }
+    let filename = ('/' + image._id + fileType)
     if (post.postedBy._id.toString() === req.user._id.toString()) {
       await fsPromises.unlink(uploadsFolder + filename)
       post.remove()
