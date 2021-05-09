@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useContext} from 'react'
 import { UserContext } from '../../App'
 import axios from 'axios'
+import M from 'materialize-css'
 
 const Profile = () => {
   const [myPics, setPics] = useState([])
@@ -32,7 +33,7 @@ const Profile = () => {
         dispatch({type: 'UPDATE-AVATAR', payload:{avatar: secondResponse.data.avatar}})
       }
     } catch(error) {
-      console.log(error)
+      M.toast({html: error.response.data, classes: 'red'})
     }
   }
 

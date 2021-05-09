@@ -1,8 +1,6 @@
 const express = require('express')
 const Formidable = require('formidable')
 const router = express.Router()
-const bluebird = require('bluebird')
-const fs = bluebird.promisifyAll(require('fs'))
 const fsPromises = require('fs').promises
 const mongoose = require('mongoose')
 const Post = mongoose.model('Post')
@@ -16,26 +14,26 @@ const uploadsFolder = join(__dirname, '/../uploads')
 If it does not exist the function will create it. */
 async function checkCreateUploadsFolder(uploadsFolder) {
   try {
-    await fs.statSync(uploadsFolder)
-  } catch(e) {
-    if (e && e.code == 'ENOENT') {
+    await fsPromises.stat(uploadsFolder)
+  } catch(error) {
+    if (error && error.code == 'ENOENT') {
       try {
-        await fs.mkdirAsync(uploadsFolder)
-      } catch(e) {
-        console.log(e)
-        return res.json({message: e})
+        await fsPromises.mkdir(uploadsFolder)
+      } catch(error) {
+        return false
       }
     } else {
-      console.log('Error reading the uploads folder')
-      return res.json({message: e})
+      return false
     }
   }
   return true
 }
 
+/* This function checks to see if the selected file is of type .jpg, .gif, or .png 
+ and if the file is not of those three types the function will return false*/
 function checkFileType(file) {
   const type = file.type.split('/').pop()
-  const validTypes = ['png', 'jpeg', 'jpg', 'gif']
+  const validTypes = ['png', 'jpeg', 'gif']
   if (validTypes.indexOf(type) == -1) {
     return false
   }
@@ -45,9 +43,9 @@ function checkFileType(file) {
 router.get('/allposts', requireLogin, async (req, res) => {
   try {
     let allPosts = await Post.find().populate('postedBy', 'username').populate('comments.postedBy', '_id username')
-    return res.json(allPosts)
+    return res.status(200).send(allPosts)
   } catch(error) {
-    return res.json({message: 'An error occurred'})
+    return res.status(500).send(error)
   }
 })
 
@@ -58,12 +56,11 @@ router.get('/followedposts', requireLogin, async (req, res) => {
     .populate('comments.postedBy', '_id username')
     .exec()
     if (followedPosts == null) {
-      return res.json(null)
+      return res.status(200).json(null)
     }
-    return res.json(followedPosts)
+    return res.status(200).send(followedPosts)
   } catch(error) {
-    console.log(error)
-    return res.json(error)
+    return res.status(500).send(error)
   }
 })
 
@@ -72,10 +69,9 @@ router.get('/myposts', requireLogin, async (req, res) => {
     let myPosts = await Post.find({postedBy:req.user._id})
     .populate('postedBy', '_id name')
     .exec()
-    return res.json(myPosts)
+    return res.status(200).send(myPosts)
   } catch (error) {
-    console.log(error)
-    return res.json({message: 'An error occured'})
+    return res.status(500).send(error)
   }
 })
 
@@ -97,14 +93,13 @@ router.post('/imageupload', requireLogin, async (req, res) => {
   const form = Formidable.IncomingForm()
   const folderExists = await checkCreateUploadsFolder(uploadsFolder)
   if (!folderExists) {
-    return res.json({message: 'There was an error with creating the uploads folder'})
+    return res.json('There was an error with creating the uploads folder')
   }
   form.parse(req, async (err, fields, files) => {
     const file = files.file
     const isValid = checkFileType(file)
-    console.log()
     if  (!isValid) {
-      return res.json({message: 'Invalid file type'})
+      return res.status(400).send('Images of types .jpg, .gif, and .png only')
     }
     try {
       const image = new Image({
@@ -112,26 +107,24 @@ router.post('/imageupload', requireLogin, async (req, res) => {
         uploadedBy: req.user
       })
       var storageFilename = ((image._id) + '.' + file.type.split('/').pop())
-      await fs.renameAsync(file.path, join(uploadsFolder, storageFilename))
+      await fsPromises.rename(file.path, join(uploadsFolder, storageFilename))
       image.save()
     } catch(error) {
-      console.log('The file upload failed, now attempting to remove the temp file...')
       try {
-        await fs.unlinkAsync(file.path)
-        return res.status.json({error: 'log'})
+        await fsPromises.unlink(file.path)
+        return res.status(500).send(error)
       } catch(error) {
-        console.log(error)
-        return res.json({message: 'The file failed to upload'})
+        return res.status(500).send('The file failed to upload')
       }
     }
-    return res.json({message: 'Image uploaded successfully', photo: storageFilename})
+    return res.status(200).send({photo: storageFilename})
   }) 
 })
 
 router.post('/createpost', requireLogin, async (req, res) => {
   const {title, body, photo} = req.body
   if (!title || !body || !photo) {
-    return res.status(422).json({message: 'Please enter all fields'})
+    return res.status(422).send('Please enter all fields')
   }
   try {
     req.user.password = undefined
@@ -163,33 +156,31 @@ router.put('/like', requireLogin, async (req, res) => {
 })
 
 router.put('/unlike', requireLogin, async (req, res) => {
-  Post.findByIdAndUpdate(req.body.postId, {$pull:{likes: req.user._id}}, {new: true})
-  .populate('comments.postedBy', '_id username')
-  .populate('postedBy', '_id username')
-  .exec((error, result) => {
-    if (error) {
-      return res.json({message: error})
-    } else {
-      return res.json(result)
-    }
-  })
+  try {
+    let post = await Post.findByIdAndUpdate(req.body.postId, {$pull:{likes: req.user._id}}, {new: true})
+    .populate('comments.postedBy', '_id username')
+    .populate('postedBy', '_id username')
+    .exec()
+    res.status(200).send(post)
+  } catch(error) {
+    res.status(500).send(error)
+  }
 })
 
 router.put('/comment', requireLogin, async (req, res) => {
-  const comment = {
-    text: req.body.text,
-    postedBy: req.user.id
-  }
-  Post.findByIdAndUpdate(req.body.postId, {$push:{comments: comment}}, {new: true})
-  .populate('comments.postedBy', '_id username')
-  .populate('postedBy', '_id username')
-  .exec((error, result) => {
-    if (error) {
-      return res.json({message: error})
-    } else {
-      return res.json(result)
+  try {
+    const comment = {
+      text: req.body.text,
+      postedBy: req.user.id
     }
-  })
+    let post = await Post.findByIdAndUpdate(req.body.postId, {$push:{comments: comment}}, {new: true})
+    .populate('comments.postedBy', '_id username')
+    .populate('postedBy', '_id username')
+    .exec()
+    res.status(200).send(post)
+  } catch(error) {
+    res.status(500).send(error)
+  }
 })
 
 router.put('/deletecomment', requireLogin, async (req, res) => {
@@ -198,10 +189,9 @@ router.put('/deletecomment', requireLogin, async (req, res) => {
     .populate('comments.postedBy', '_id username')
     .populate('postedBy', '_id username')
     .exec()
-    return res.json(post)
+    return res.status(200).send(post)
   } catch(error) {
-    console.log(error)
-    res.json(error)
+    res.status(500).send(error)
   }
 })
 
@@ -221,8 +211,7 @@ router.delete('/deletepost/:postId', requireLogin, async (req, res) => {
       return res.json({message: "Post successfully deleted", item: post})
     }
   } catch(error) {
-    console.log(error)
-    res.json(error)
+    res.status(500).send(error)
   }
 })
 

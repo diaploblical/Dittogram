@@ -19,12 +19,12 @@ const CreatePost = () => {
             'Authorization': 'Bearer ' + localStorage.getItem('jwt')
           }
         })
-        M.toast({html: response.data.message, classes: 'green'})
+        M.toast({html: response, classes: 'green'})
       } 
     }
     createPost()
   }, [photo])
-
+  //note to self: make sure the body and title exist before trying to upload the image
   const postDetails = async () => {
     const formData = new FormData()
     try {
@@ -36,10 +36,10 @@ const CreatePost = () => {
           'Filename': image.name
         }
       })
-      M.toast({html: response.data.message, classes: 'green'})
+      M.toast({html: response.data, classes: 'green'})
       setPhoto(response.data.photo)
     } catch(error) {
-      M.toast({html: error.response.data.message, classes: 'red'})
+      console.log(error)
     }
   }
   
