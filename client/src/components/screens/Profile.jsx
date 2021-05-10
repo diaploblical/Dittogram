@@ -33,7 +33,7 @@ const Profile = () => {
         dispatch({type: 'UPDATE-AVATAR', payload:{avatar: secondResponse.data.avatar}})
       }
     } catch(error) {
-      M.toast({html: error.response.data, classes: 'red'})
+      M.toast({html: error.response.data.message, classes: 'red'})
     }
   }
 
@@ -47,7 +47,7 @@ const Profile = () => {
         })
         await setPics(response.data)       
       } catch(error) {
-        console.log(error)
+        M.toast({html: error.response.data.message, classes: 'red'})
       }
     }
     getMyPosts()
@@ -81,7 +81,7 @@ const Profile = () => {
       </div>
       </div>
         <div>
-          <h4>{profile ? profile.username : 'LOADINGU LOADINGU'}</h4>
+          <h4>{profile ? profile.username : 'loading'}</h4>
           <div className='postFollowContainer'>
             <h5>{myPics.length === 1 ? myPics.length + ' post' : myPics.length + ' posts'}</h5>
             <h5>{profile ? profile.followers.length : '0'} followers</h5>

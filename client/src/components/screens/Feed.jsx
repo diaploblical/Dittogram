@@ -43,7 +43,7 @@ const Feed = () => {
       })
       setData(newData)
     } catch(error) {
-      console.log(error)
+      return false
     }
   }
 
@@ -64,7 +64,7 @@ const Feed = () => {
       })
       setData(newData)
     } catch(error) {
-      console.log(error)
+      return false
     }
   }
 
@@ -85,7 +85,7 @@ const Feed = () => {
       })
       setData(newData)
     } catch(error) {
-      console.log(error)
+      return false
     }
   }
 
@@ -105,7 +105,7 @@ const Feed = () => {
       })
       setData(newData)
     } catch(error) {
-      console.log(error)
+      return false
     }
   }
 
@@ -121,7 +121,6 @@ const Feed = () => {
                 <img src={`http://localhost:5000/api/image/${item.photo}`} alt={item.photo}/>
               </div>
               <div className='card-content'>
-                <i className='material-icons mi-margins'>favorite</i>
                 {
                   item.likes.includes(state._id) ? 
                   <i className='material-icons mi-margins' onClick={() => {unlikePost(item._id)}}>thumb_down</i> : 

@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect} from 'react'
+import {useHistory} from 'react-router-dom'
 import axios from 'axios'
 import M from 'materialize-css'
 
@@ -8,6 +9,7 @@ const CreatePost = () => {
   const [body, setBody] = useState('')
   const [image, setImage] = useState('')
   const [photo, setPhoto] = useState('')
+  const history = useHistory()
   
   useEffect(() => {
     const createPost = async() => {
@@ -19,28 +21,36 @@ const CreatePost = () => {
             'Authorization': 'Bearer ' + localStorage.getItem('jwt')
           }
         })
-        M.toast({html: response, classes: 'green'})
+        M.toast({html: response.data.message, classes: 'green'})
+        return await history.push('/')
       } 
     }
     createPost()
   }, [photo])
-  //note to self: make sure the body and title exist before trying to upload the image
+  
   const postDetails = async () => {
-    const formData = new FormData()
-    try {
-      formData.append('file', image, image.name)
-      let response = await axios.post('/imageupload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': 'Bearer ' + localStorage.getItem('jwt'),
-          'Filename': image.name
-        }
-      })
-      M.toast({html: response.data, classes: 'green'})
-      setPhoto(response.data.photo)
-    } catch(error) {
-      console.log(error)
-    }
+    if (title.length  < 1) {
+      return M.toast({html: 'Title is required', classes: 'red'})
+    } else if (body.length < 1) {
+      return M.toast({html: 'Body is required', classes: 'red'})
+    } else if (image.length < 1) {
+      return M.toast({html: 'Please select an image', classes: 'red'})
+    } else {
+      try {
+        const formData = new FormData()
+        formData.append('file', image, image.name)
+        let response = await axios.post('/imageupload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer ' + localStorage.getItem('jwt'),
+            'Filename': image.name
+          }
+        })
+        setPhoto(response.data.photo)
+      } catch(error) {
+        return M.toast({html: error.response.data.message, classes: 'red'})
+      }
+    }  
   }
   
   return(

@@ -45,7 +45,7 @@ router.get('/allposts', requireLogin, async (req, res) => {
     let allPosts = await Post.find().populate('postedBy', 'username').populate('comments.postedBy', '_id username')
     return res.status(200).send(allPosts)
   } catch(error) {
-    return res.status(500).send(error)
+    return res.status(500).send({message: 'An error has occurred'})
   }
 })
 
@@ -60,7 +60,7 @@ router.get('/followedposts', requireLogin, async (req, res) => {
     }
     return res.status(200).send(followedPosts)
   } catch(error) {
-    return res.status(500).send(error)
+    return res.status(500).send({message: 'An error has occurred'})
   }
 })
 
@@ -71,12 +71,12 @@ router.get('/myposts', requireLogin, async (req, res) => {
     .exec()
     return res.status(200).send(myPosts)
   } catch (error) {
-    return res.status(500).send(error)
+    return res.status(500).send({message: 'An error has occurred'})
   }
 })
 
 router.get('/defaultavatar', async (req, res) => {
-  return res.sendFile(path.join(__dirname, '..', '/assets/default.png'))
+  return res.status(200).sendFile(path.join(__dirname, '..', '/assets/default.png'))
 })
 
 router.get('/api/image/:id', async (req, res) => {
@@ -86,20 +86,20 @@ router.get('/api/image/:id', async (req, res) => {
   if (fileType == '.jpg') {
     fileType = '.jpeg'
   }
-  return res.sendFile(path.join(__dirname, '..', `/uploads/${imageId}` + fileType))
+  return res.status(200).sendFile(path.join(__dirname, '..', `/uploads/${imageId}` + fileType))
 })
 
 router.post('/imageupload', requireLogin, async (req, res) => {
   const form = Formidable.IncomingForm()
   const folderExists = await checkCreateUploadsFolder(uploadsFolder)
   if (!folderExists) {
-    return res.json('There was an error with creating the uploads folder')
+    return res.status(500).send({message: 'An error has occurred'})
   }
   form.parse(req, async (err, fields, files) => {
     const file = files.file
     const isValid = checkFileType(file)
     if  (!isValid) {
-      return res.status(400).send('Images of types .jpg, .gif, and .png only')
+      return res.status(400).send({message: 'Images of types .jpg, .gif, and .png only'})
     }
     try {
       const image = new Image({
@@ -112,9 +112,9 @@ router.post('/imageupload', requireLogin, async (req, res) => {
     } catch(error) {
       try {
         await fsPromises.unlink(file.path)
-        return res.status(500).send(error)
+        return res.status(500).send({message: 'An error has occurred'})
       } catch(error) {
-        return res.status(500).send('The file failed to upload')
+        return res.status(500).send({message: 'An error has occurred'})
       }
     }
     return res.status(200).send({photo: storageFilename})
@@ -135,10 +135,9 @@ router.post('/createpost', requireLogin, async (req, res) => {
       postedBy: req.user
     })
     post.save()
-    return res.json({message: 'Post successfully created', post})
+    return res.status(200).send({message: 'Post successfully created', post})
   } catch(error) {
-    console.log(error)
-    return res.json({message: 'Post failed to be created'})
+    return res.status(500).send(error)
   }
 })
 
