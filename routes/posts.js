@@ -124,7 +124,7 @@ router.post('/imageupload', requireLogin, async (req, res) => {
 router.post('/createpost', requireLogin, async (req, res) => {
   const {title, body, photo} = req.body
   if (!title || !body || !photo) {
-    return res.status(422).send('Please enter all fields')
+    return res.status(422).send({message: 'Please enter all fields'})
   }
   try {
     req.user.password = undefined
@@ -142,16 +142,15 @@ router.post('/createpost', requireLogin, async (req, res) => {
 })
 
 router.put('/like', requireLogin, async (req, res) => {
-  Post.findByIdAndUpdate(req.body.postId, {$push:{likes: req.user._id}}, {new: true})
-  .populate('comments.postedBy', '_id username')
-  .populate('postedBy', '_id username')
-  .exec((error, result) => {
-    if (error) {
-      return res.json({message: error})
-    } else {
-      return res.json(result)
-    }
-  })
+  try {
+    let post = await Post.findByIdAndUpdate(req.body.postId, {$push:{likes: req.user._id}}, {new: true})
+    .populate('comments.postedBy', '_id username')
+    .populate('postedBy', '_id username')
+    .exec()
+    res.status(200).send(post)
+  } catch(error) {
+    return res.status(500).send({message: 'An error has occurred'})
+  }
 })
 
 router.put('/unlike', requireLogin, async (req, res) => {
@@ -162,7 +161,7 @@ router.put('/unlike', requireLogin, async (req, res) => {
     .exec()
     res.status(200).send(post)
   } catch(error) {
-    res.status(500).send(error)
+    res.status(500).send({message: 'An error has occurred'})
   }
 })
 
@@ -178,7 +177,7 @@ router.put('/comment', requireLogin, async (req, res) => {
     .exec()
     res.status(200).send(post)
   } catch(error) {
-    res.status(500).send(error)
+    res.status(500).send({message: 'An error has occurred'})
   }
 })
 
@@ -190,7 +189,7 @@ router.put('/deletecomment', requireLogin, async (req, res) => {
     .exec()
     return res.status(200).send(post)
   } catch(error) {
-    res.status(500).send(error)
+    res.status(500).send({message: 'An error has occurred'})
   }
 })
 
@@ -207,10 +206,10 @@ router.delete('/deletepost/:postId', requireLogin, async (req, res) => {
       await fsPromises.unlink(uploadsFolder + filename)
       post.remove()
       image.remove()
-      return res.json({message: "Post successfully deleted", item: post})
+      return res.status(200).send({message: "Post successfully deleted", item: post})
     }
   } catch(error) {
-    res.status(500).send(error)
+    res.status(500).send({message: 'An error has occurred'})
   }
 })
 

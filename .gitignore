@@ -1,7 +1,5 @@
 #dependencies
 node_modules
-uploaded
-#/backend/node-modules
 .pnp
 .pnp.js
 
@@ -9,7 +7,7 @@ uploaded
 build
 
 #key files
-/backend/keys.js
+keys.js
 
 # misc
 .vscode
@@ -21,5 +19,5 @@ yarn-debug.log*
 yarn-error.log*
 *.lock
 package-lock.json
-/backend/uploads
+uploads
 assets

@@ -3,6 +3,7 @@ import React, {useEffect, useState, useContext} from 'react'
 import { UserContext } from '../../App'
 import {useParams} from 'react-router-dom'
 import axios from 'axios'
+import M from 'materialize-css'
 
 const UserProfile = () => {
   const [userProfile, setUserProfile] = useState(null)
@@ -22,7 +23,7 @@ const UserProfile = () => {
         })
         setUserProfile(response.data)
       } catch(error) {
-        console.log(error)
+        return M.toast({html: error.response.data.message, classes: 'red'})
       }    
     }
     getMyPosts()
@@ -44,7 +45,7 @@ const UserProfile = () => {
       })
       setShowFollow(false)
     } catch(error) {
-      console.log(error)
+      return M.toast({html: error.response.data.message, classes: 'red'})
     }
   }
 
@@ -65,7 +66,7 @@ const UserProfile = () => {
       })
       setShowFollow(true)   
     } catch(error) {
-      console.log(error)
+      return M.toast({html: error.response.data.message, classes: 'red'})
     }
   }
 

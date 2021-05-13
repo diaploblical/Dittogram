@@ -13,10 +13,9 @@ router.get('/user/:id', requireLogin, async (req, res) => {
   try {
     const user = await User.findOne({_id: req.params.id}).select('-password')
     const posts = await Post.find({postedBy: req.params.id}).populate('postedBy', '_id username').exec()
-    return res.json({user, posts})
+    return res.status(200).send({user, posts})
   } catch(error) {
-    console.log(error)
-    return res.json({message: error})
+    return res.status(500).send({message: 'An error has occurred'})
   }
 })
 
@@ -24,10 +23,10 @@ router.put('/follow', requireLogin, async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.body.followId, {$push:{followers: req.user._id}}, {new: true}).select('-password')
     let user = await User.findByIdAndUpdate(req.user._id, {$push:{following: req.body.followId}}, {new: true}).select('-password')
-    return res.json(user)
+    return res.status(200).send(user)
   } catch(error) {
     console.log(error)
-    return res.json({message: error})
+    return res.status(500).send({message: 'An error has occurred'})
   }
 })
 
@@ -35,10 +34,10 @@ router.put('/unfollow', requireLogin, async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.body.unfollowId, {$pull:{followers: req.user._id}}, {new: true}).select('-password')
     let user = await User.findByIdAndUpdate(req.user._id, {$pull:{following: req.body.unfollowId}}, {new: true}).select('-password')
-    return res.json(user)
+    return res.status(200).send(user)
   } catch(error) {
     console.log(error)
-    return res.json({message: error})
+    return res.status(500).send({message: 'An error has occurred'})
   }
 })
 
@@ -58,10 +57,10 @@ router.put('/setavatar', requireLogin, async (req, res) => {
       return res.json(user)
     } else {
       user = await User.findByIdAndUpdate(req.user._id, {avatar: req.body.avatarId}, {new: true}).select('-password')
-      return res.json(user)
+      return res.status(200).send(user)
     }
   } catch(error) {
-    console.log(error)
+    return res.status(500).send({message: 'An error has occurred'})
   } 
 })
 

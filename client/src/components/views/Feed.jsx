@@ -4,25 +4,27 @@ import {UserContext} from '../../App'
 import {Link} from 'react-router-dom'
 import M from 'materialize-css'
 
-const Home = () => {
+const Feed = () => {
   const [data, setData] = useState([])
   const {state} = useContext(UserContext)
 
   useEffect(() => {
-    const getAllPosts = async () => {
+    const getFollowedPosts = async () => {
       try {
-        let response = await axios.get('/allposts', {
+        let response = await axios.get('/followedposts', {
           headers: {
             'Authorization': 'Bearer ' + localStorage.getItem('jwt')
           }
         })
-        await setData(response.data)
+        if (response.data !== null && response.data !== undefined) {
+          await setData(response.data)
+        }
       } catch(error) {
-        M.toast({html: error.response.data.message, classes: 'red'})
+        return M.toast({html: error.response.data.message, classes: 'red'})
       }
     }
-    getAllPosts() 
-  },[data])
+    getFollowedPosts()
+  },[])
 
   const likePost = async (id) => {
     let response = await axios.put('/like', {postId: id}, {
@@ -41,7 +43,7 @@ const Home = () => {
       })
       setData(newData)
     } catch(error) {
-      return false
+      return M.toast({html: error.response.data.message, classes: 'red'})
     }
   }
 
@@ -62,7 +64,7 @@ const Home = () => {
       })
       setData(newData)
     } catch(error) {
-      return false
+      return M.toast({html: error.response.data.message, classes: 'red'})
     }
   }
 
@@ -83,7 +85,7 @@ const Home = () => {
       })
       setData(newData)
     } catch(error) {
-      return false
+      return M.toast({html: error.response.data.message, classes: 'red'})
     }
   }
 
@@ -107,23 +109,6 @@ const Home = () => {
     }
   }
 
-  const deletePost = async (postId) => {
-    let response = await axios.delete(`/deletepost/${postId}`, {
-      headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('jwt')
-      }
-    })
-    try {
-      const newData = data.filter(item => {
-        return item._id !== response._id
-      })
-      M.toast({html: await response.data.message, classes: 'green'})
-      setData(newData)
-    } catch(error) {
-      return false
-    }
-  }
-
   return(
     <div className='custom-container'>
       {
@@ -132,9 +117,6 @@ const Home = () => {
             <div key={item._id} className='card home-card'>         
               <div className='card-image'>
                 <h4><Link to={item.postedBy._id !== state._id ? `/profile/${item.postedBy._id}` : '/profile'}>{item.postedBy.username}</Link>
-                {item.postedBy._id === state._id && 
-                  <i style={{float: 'right'}} className='material-icons' onClick={() => deletePost(item._id)}>delete</i>
-                }
                 </h4>
                 <img src={`http://localhost:5000/api/image/${item.photo}`} alt={item.photo}/>
               </div>
@@ -168,10 +150,10 @@ const Home = () => {
               </div>
             </div>
           )
-        }) : 'loading'
+        }) : 'no'        
       }
     </div>
   )
 }
 
-export default Home
+export default Feed
