@@ -1,3 +1,66 @@
+@media (min-width: 992px) {
+  html {
+    font-size: 16px !important;
+  }
+  body {
+    background-color: red;
+  }
+  .avatar {
+    width: 200px;
+    height: 200px;
+  }
+} /* for desktops */
+
+@media (max-width: 991px) {
+  html {
+    font-size: 14px !important;
+  }
+  body {
+    background-color: blue;
+  }
+  .avatar {
+    width: 175px;
+    height: 175px;
+  }
+} /* for laptops */
+
+@media (min-width: 768px) and (max-width: 990px) {
+  html {
+    font-size: 12px !important;
+  }
+  body {
+    background-color: green;
+  }
+  .avatar {
+    width: 150px;
+    height: 150px;
+  }
+} /* for large tablets */
+
+@media (max-width: 768px) {
+  html {
+    font-size: 12px !important;
+  }
+  body {
+    background-color: yellow;
+  }
+  .avatar {
+    width: 125px;
+    height: 125px;
+  }
+} /* for smaller tablets */
+
+@media (max-width: 500px) {
+  html {
+    font-size: 12px !important;
+  }
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+  }
+} /* for cellphones */
+
 /* login and signup form */
 .auth-card {
   padding: 20px;
@@ -29,18 +92,6 @@
   border-bottom: solid;
 }
 
-.avatar {
-  width: 160px;
-  height: 160px; 
-  border-radius: 80px;
-}
-
-.postFollowContainer {
-  display: flex;
-  justify-content: space-between;
-  width: 108%;
-}
-
 .gallery {
   display: flex;
   flex-wrap: wrap;
@@ -48,11 +99,6 @@
 
 .item {
   width: 30%;
-}
-
-.custom-container {
-  max-width: 1050px;
-  margin: 0px auto;
 }
 
 .create-post-container {
@@ -65,7 +111,7 @@
 #toast-container {
   top: 30px !important;
   right: 20px !important;
-  left:auto !important
+  left: auto !important
 }
 
 .mi-margins {
