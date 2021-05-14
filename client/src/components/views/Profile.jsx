@@ -60,7 +60,7 @@ const Profile = () => {
           <img className='avatar' src={profile.avatar ? `${localhost}/api/image/${profile.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
           <div className='file-field input-field'>
             <div className='btn waves-effect waves-light blue'>
-              <span id='fileSpan'>Select Avatar</span>
+              <span className='float-center' id='fileSpan'>Select Avatar</span>
               <input type='file' 
                 onChange={(e)=> {
                     setImage(e.target.files[0])
@@ -75,18 +75,21 @@ const Profile = () => {
                 }}
               />
             </div>
-          <div className='file-path-wrapper'>
-            <input className='file-path validate hidden' type='text' />
+            <div className='file-path-wrapper'>
+              <input className='file-path validate hidden' type='text' />
+            </div>
           </div>
+        </div>
       </div>
-      </div>
-        <div>
-          <h4>{profile ? profile.username : 'loading'}</h4>
-          <div className='postFollowContainer'>
-            <h5>{myPics.length === 1 ? myPics.length + ' post' : myPics.length + ' posts'}</h5>
-            <h5>{profile ? profile.followers.length : '0'} followers</h5>
-            <h5>{profile ? profile.following.length : '0'} following</h5>
-          </div>
+      <div>
+        <h4>{profile ? profile.username : 'loading'}</h4>
+        <div className='postFollowContainer'>
+          <h5>{myPics.length === 1 ? myPics.length + ' post' : myPics.length + ' posts'}</h5>
+          <h5>{profile ? profile.followers.length : '0'} followers</h5>
+          <h5>{profile ? profile.following.length : '0'} following</h5>
+        </div>
+        <div className="container">
+          <button className='btn'>YEA</button>
         </div>
       </div>
       <div className='gallery'>
