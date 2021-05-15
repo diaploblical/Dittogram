@@ -1,7 +1,7 @@
 import React, {useContext} from 'react'
 import {Link} from 'react-router-dom'
 import {UserContext} from '../App'
-import M from 'materialize-css'
+//import M from 'materialize-css'
 
 const Navbar = () => {
   const {state, dispatch} = useContext(UserContext)
@@ -24,12 +24,12 @@ const Navbar = () => {
     <nav>
       <div className='nav-wrapper blue'>
         <Link to={state ? '/' : '/login'} className='brand-logo'>notInstagram</Link>
-        <a href='#' data-target='sidenav' className='sidenav-trigger'><i class="material-icons">menu</i></a>
+        <a href='#' data-target='sidenav' className='sidenav-trigger'><i className="material-icons">menu</i></a>
         <ul id='nav-mobile' className='right hide-on-med-and-down'>
           {renderList()}
         </ul>
       </div>
-      <ul class='sidenav' id='sidenav'>
+      <ul className='sidenav' id='sidenav'>
         <a href="">test</a>
       </ul>
     </nav>

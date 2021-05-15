@@ -1,4 +1,56 @@
-@media (min-width: 992px) {
+@media only screen and (max-width: 600px) {
+  html {
+    font-size: 12px !important;
+  }
+  body {
+    background-color: pink;
+  }
+  .avatar {
+    width: 125px;
+    height: 125px;
+  }
+} /* for smaller tablets */
+
+@media only screen and (min-width: 600px) {
+  html {
+    font-size: 14px !important;
+  }
+  body {
+    background-color: yellow;
+  }
+  .avatar {
+    width: 125px;
+    height: 125px;
+  }
+} /* for smaller tablets */
+
+@media only screen and (min-width: 768px){
+  html {
+    font-size: 14px !important;
+  }
+  body {
+    background-color: green;
+  }
+  .avatar {
+    width: 150px;
+    height: 150px;
+  }
+} /* for large tablets */
+
+@media only screen and (min-width: 992px) {
+  html {
+    font-size: 16px !important;
+  }
+  body {
+    background-color: blue;
+  }
+  .avatar {
+    width: 175px;
+    height: 175px;
+  }
+} /* for laptops */
+
+@media only screen and (min-width: 1200px) {
   html {
     font-size: 16px !important;
   }
@@ -11,57 +63,13 @@
   }
 } /* for desktops */
 
-@media (max-width: 991px) {
-  html {
-    font-size: 14px !important;
-  }
-  body {
-    background-color: blue;
-  }
-  .avatar {
-    width: 175px;
-    height: 175px;
-  }
-} /* for laptops */
+.row .col{
+  float: none !important;
+  margin-left: auto;
+  margin-right: auto;
+}
 
-@media (min-width: 768px) and (max-width: 990px) {
-  html {
-    font-size: 12px !important;
-  }
-  body {
-    background-color: green;
-  }
-  .avatar {
-    width: 150px;
-    height: 150px;
-  }
-} /* for large tablets */
-
-@media (max-width: 768px) {
-  html {
-    font-size: 12px !important;
-  }
-  body {
-    background-color: yellow;
-  }
-  .avatar {
-    width: 125px;
-    height: 125px;
-  }
-} /* for smaller tablets */
-
-@media (max-width: 500px) {
-  html {
-    font-size: 12px !important;
-  }
-
-  .avatar {
-    width: 100px;
-    height: 100px;
-  }
-} /* for cellphones */
-
-/* login and signup form */
+/* display cards */
 .auth-card {
   padding: 20px;
   text-align: center;
@@ -69,15 +77,8 @@
   margin: 10px auto !important;
 }
 
-/* profile card */
 .my-card {
   margin-top: 30px;
-}
-
-.home-card {
-  width: 500px;
-  height: max-content;
-  margin: 26px auto !important;
 }
 
 .input-field input:focus {
