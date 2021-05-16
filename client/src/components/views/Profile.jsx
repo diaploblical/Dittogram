@@ -57,7 +57,7 @@ const Profile = () => {
     <div className='container'>
       <div className='profile row'>
         <div className='col s3'>
-          <img className='avatar' id='profile-avatar'src={profile.avatar ? `${localhost}/api/image/${profile.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
+          <img className='avatar' src={profile.avatar ? `${localhost}/api/image/${profile.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
           <div className='file-field input-field'>
             <div className='btn waves-effect waves-light blue'>
               <span id='fileSpan'>Select Avatar</span>
@@ -80,15 +80,25 @@ const Profile = () => {
             </div>
           </div>       
         </div>
-        <div className='col s9' id='userInfo'>
-          
+        <div className='col s9'>       
           <div className='row'>
-            <div className='col s4'><h5>{myPics.length === 1 ? myPics.length + ' post' : myPics.length + ' posts'}</h5></div>
-            <div className='col s4'><h5>{profile ? profile.followers.length : '0'} followers</h5></div>
-            <div className='col s4'><h5>{profile ? profile.following.length : '0'} following</h5></div>
+            <div className='col s4 center-align'>
+              <h5>{myPics.length}</h5>
+              <h5>{myPics.length === 1 ? 'post' : 'posts'}</h5>
+              </div>
+            <div className='col s4 center-align'
+            ><h5>{profile ? profile.followers.length : '0'}</h5>
+            <h5>followers</h5>
+            </div>
+            <div className='col s4 center-align'>
+              <h5>{profile ? profile.following.length : '0'}</h5>
+              <h5>following</h5>
+              </div>
           </div>
-          <div className="row">
-            <button className='btn'>test</button>
+          <div className='row'>
+            <div className='col s12 center-align'>
+              <button className='btn'>Follow User</button>
+            </div>
           </div>
         </div>
       </div>
