@@ -206,7 +206,7 @@ router.delete('/deletepost/:postId', requireLogin, async (req, res) => {
       await fsPromises.unlink(uploadsFolder + filename)
       post.remove()
       image.remove()
-      return res.status(200).send({message: "Post successfully deleted", item: post})
+      return res.status(200).send({message: 'Post successfully deleted', item: post})
     }
   } catch(error) {
     res.status(500).send({message: 'An error has occurred'})

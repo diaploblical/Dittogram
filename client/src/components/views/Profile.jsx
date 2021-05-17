@@ -80,20 +80,20 @@ const Profile = () => {
             </div>
           </div>       
         </div>
-        <div className='col s9'>       
+        <div className='col s9'>      
           <div className='row'>
             <div className='col s4 center-align'>
               <h5>{myPics.length}</h5>
               <h5>{myPics.length === 1 ? 'post' : 'posts'}</h5>
-              </div>
-            <div className='col s4 center-align'
-            ><h5>{profile ? profile.followers.length : '0'}</h5>
-            <h5>followers</h5>
+            </div>
+            <div className='col s4 center-align'>
+              <h5>{profile ? profile.followers.length : '0'}</h5>
+              <h5>followers</h5>
             </div>
             <div className='col s4 center-align'>
               <h5>{profile ? profile.following.length : '0'}</h5>
               <h5>following</h5>
-              </div>
+            </div>
           </div>
           <div className='row'>
             <div className='col s12 center-align'>

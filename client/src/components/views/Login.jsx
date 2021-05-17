@@ -31,7 +31,7 @@ const Login = () => {
     }
   }
   return(
-    <div className='container'>
+    <div className='my-card'>
       <div className='card auth-card input-field'>
         <h2>Log in</h2>
         <input type='text' placeholder='email' value={email} onChange={(e) => setEmail(e.target.value)} />

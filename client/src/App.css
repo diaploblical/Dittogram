@@ -2,9 +2,6 @@
   html {
     font-size: 12px !important;
   }
-  body {
-    background-color: pink;
-  }
   .avatar {
     width: 125px;
     height: 125px;
@@ -14,9 +11,6 @@
 @media only screen and (min-width: 600px) {
   html {
     font-size: 14px !important;
-  }
-  body {
-    background-color: yellow;
   }
   .avatar {
     width: 125px;
@@ -28,9 +22,6 @@
   html {
     font-size: 14px !important;
   }
-  body {
-    background-color: green;
-  }
   .avatar {
     width: 150px;
     height: 150px;
@@ -41,9 +32,6 @@
   html {
     font-size: 15px !important;
   }
-  body {
-    background-color: blue;
-  }
   .avatar {
     width: 175px;
     height: 175px;
@@ -53,9 +41,6 @@
 @media only screen and (min-width: 1200px) {
   html {
     font-size: 15px !important;
-  }
-  body {
-    background-color: rgb(61, 137, 204);
   }
   .avatar {
     width: 200px;
@@ -79,7 +64,7 @@
 
 /* home page elements */
 .my-card {
-  margin-top: 30px;
+  margin-top: 50px;
 }
 
 .post-card {
@@ -132,4 +117,8 @@
 
 .hidden {
   display: none;
+}
+
+.item {
+  max-width: 300px;
 }

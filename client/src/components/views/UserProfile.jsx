@@ -73,30 +73,42 @@ const UserProfile = () => {
   return(
     <>
     {userProfile ? 
-      <div className="custom-container">
-        <div className="profile">
-          <div>
-          <img className='avatar' src={userProfile.user.avatar ? `${localhost}/api/image/${userProfile.user.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
+      <div className='container'>
+        <div className='profile row'>
+          <div className='col s3'>
+            <img className='avatar' src={userProfile.user.avatar ? `${localhost}/api/image/${userProfile.user.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
           </div>
-          <div>
-            <h4>{userProfile.user.username}</h4>
-            {
-              showFollow ?
-              <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => followUser()}>Follow</button> :
-              <button className="btn waves-effect waves-light blue" type="submit" name="action" onClick={() => unfollowUser()}>Unfollow</button>
-            }
-            <div className="postFollowContainer">
-              <h5>{userProfile.posts.length === 1 ? userProfile.posts.length + " post" : userProfile.posts.length + " posts"}</h5>
-              <h5>{userProfile.user.followers.length} followers</h5>
-              <h5>{userProfile.user.following.length} following</h5>
+          <div className='col s9'>
+            <div className='row'>
+              <div className='col s4 center-align'>
+              <h5>{userProfile.posts.length}</h5>
+                <h5>{userProfile.posts.length === 1 ? 'post' : 'posts'}</h5>
+              </div>
+              <div className='col s4 center-align'>
+                <h5>{userProfile.user.followers.length}</h5>
+                <h5>followers</h5>
+              </div>
+              <div className='col s4 center-align'>
+                <h5>{userProfile.user.following.length}</h5>
+                <h5>following</h5>
+              </div>
+            </div>
+            <div className='row'>
+              <div className='col s12 center-align'>
+                {
+                  showFollow ?
+                  <button className='btn waves-effect waves-light blue' type='submit' name='action' onClick={() => followUser()}>Follow</button> :
+                  <button className='btn waves-effect waves-light blue' type='submit' name='action' onClick={() => unfollowUser()}>Unfollow</button>
+                }
+              </div>
             </div>
           </div>
         </div>
-        <div className="gallery">
+        <div className='gallery'>
           {
             userProfile.posts.map(item => {
               return(
-                <img key={item._id} src={`http://localhost:5000/api/image/${item.photo}`} alt={item.title} className="item" />
+                <img key={item._id} src={`http://localhost:5000/api/image/${item.photo}`} alt={item.title} className='item' />
               )
             })
           }
