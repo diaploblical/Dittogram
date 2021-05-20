@@ -138,7 +138,7 @@ const Home = () => {
                       <i style={{float: 'right'}} className='material-icons' onClick={() => deletePost(item._id)}>delete</i>
                     }
                     </h4>
-                    <img src={`http://localhost:5000/api/image/${item.photo}`} alt={item.photo}/>
+                    <img src={`/image/${item.photo}`} alt={item.photo}/>
                   </div>
                   <div className='card-content'>
                     {

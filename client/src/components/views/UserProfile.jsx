@@ -11,7 +11,6 @@ const UserProfile = () => {
   const {dispatch} = useContext(UserContext)
   const {userid} = useParams()
   const [showFollow, setShowFollow] = useState(profile ? !profile.following.includes(userid) : true)
-  const localhost = 'http://localhost:5000'
   
   useEffect(() => {
     const getMyPosts = async () => {
@@ -76,7 +75,7 @@ const UserProfile = () => {
       <div className='container'>
         <div className='profile row'>
           <div className='col s3'>
-            <img className='avatar' src={userProfile.user.avatar ? `${localhost}/api/image/${userProfile.user.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
+            <img className='avatar' src={userProfile.user.avatar ? `/image/${userProfile.user.avatar}` : `/defaultavatar`} alt="user's avatar" />
           </div>
           <div className='col s9'>
             <div className='row'>
@@ -108,7 +107,7 @@ const UserProfile = () => {
           {
             userProfile.posts.map(item => {
               return(
-                <img key={item._id} src={`http://localhost:5000/api/image/${item.photo}`} alt={item.title} className='item' />
+                <img key={item._id} src={`/image/${item.photo}`} alt={item.title} className='item' />
               )
             })
           }

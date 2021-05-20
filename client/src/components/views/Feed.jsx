@@ -118,7 +118,7 @@ const Feed = () => {
               <div className='card-image'>
                 <h4><Link to={item.postedBy._id !== state._id ? `/profile/${item.postedBy._id}` : '/profile'}>{item.postedBy.username}</Link>
                 </h4>
-                <img src={`http://localhost:5000/api/image/${item.photo}`} alt={item.photo}/>
+                <img src={`/image/${item.photo}`} alt={item.photo}/>
               </div>
               <div className='card-content'>
                 {

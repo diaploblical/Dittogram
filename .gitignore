@@ -6,8 +6,8 @@ node_modules
 #build files
 build
 
-#key files
-keys.js
+#config
+config/dev.js
 
 # misc
 .vscode
@@ -20,4 +20,3 @@ yarn-error.log*
 *.lock
 package-lock.json
 uploads
-assets

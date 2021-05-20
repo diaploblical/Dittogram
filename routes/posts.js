@@ -79,7 +79,7 @@ router.get('/defaultavatar', async (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, '..', '/assets/default.png'))
 })
 
-router.get('/api/image/:id', async (req, res) => {
+router.get('/image/:id', async (req, res) => {
   const imageId = req.params.id
   const image = await Image.findOne({_id: imageId})
   var fileType = '.' + image.filename.split('.').pop()

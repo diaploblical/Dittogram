@@ -8,7 +8,6 @@ const Profile = () => {
   const {dispatch} = useContext(UserContext)
   const [image, setImage] = useState('')
   const profile = JSON.parse(localStorage.getItem('user'))
-  const localhost = 'http://localhost:5000'
   
   const uploadAvatar = async () => {
     const formData = new FormData()
@@ -57,7 +56,7 @@ const Profile = () => {
     <div className='container'>
       <div className='profile row'>
         <div className='col s3'>
-          <img className='avatar' src={profile.avatar ? `${localhost}/api/image/${profile.avatar}` : `${localhost}/defaultavatar`} alt="user's avatar" />
+          <img className='avatar valign-wrapper' src={profile.avatar ? `/image/${profile.avatar}` : `/defaultavatar`} alt="user's avatar" />
           <div className='file-field input-field'>
             <div className='btn waves-effect waves-light blue'>
               <span id='fileSpan'>Select Avatar</span>
@@ -95,18 +94,13 @@ const Profile = () => {
               <h5>following</h5>
             </div>
           </div>
-          <div className='row'>
-            <div className='col s12 center-align'>
-              <button className='btn'>Follow User</button>
-            </div>
-          </div>
         </div>
       </div>
       <div className='gallery'>
         {
           myPics.map(item => {
             return(
-              <img key={item._id}src={`http://localhost:5000/api/image/${item.photo}`} alt={item.title} className='item' />
+              <img key={item._id}src={`/image/${item.photo}`} alt={item.title} className='item' />
             )
           })
         }

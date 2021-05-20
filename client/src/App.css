@@ -2,19 +2,11 @@
   html {
     font-size: 12px !important;
   }
-  .avatar {
-    width: 125px;
-    height: 125px;
-  }
 } /* for smaller tablets */
 
 @media only screen and (min-width: 600px) {
   html {
     font-size: 14px !important;
-  }
-  .avatar {
-    width: 125px;
-    height: 125px;
   }
 } /* for smaller tablets */
 
@@ -22,33 +14,25 @@
   html {
     font-size: 14px !important;
   }
-  .avatar {
-    width: 150px;
-    height: 150px;
-  }
 } /* for large tablets */
 
 @media only screen and (min-width: 992px) {
   html {
     font-size: 15px !important;
   }
-  .avatar {
-    width: 175px;
-    height: 175px;
-  }
 } /* for laptops */
 
 @media only screen and (min-width: 1200px) {
   html {
     font-size: 15px !important;
-  }
-  .avatar {
-    width: 200px;
-    height: 200px;
-  }
+  }  
 } /* for desktops */
 
 /* input fields */
+.btn {
+  width: 100% !important;
+}
+
 .input-field input:focus {
   border-bottom: 1px solid rgb(8, 93, 252) !important;
   box-shadow: 0 1px solid rgb(8, 93, 252) !important;
@@ -65,6 +49,11 @@
 /* home page elements */
 .my-card {
   margin-top: 50px;
+}
+
+.avatar {
+  max-width: 100%;
+  text-align: center;
 }
 
 .post-card {
