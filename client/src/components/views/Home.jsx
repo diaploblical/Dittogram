@@ -129,9 +129,9 @@ const Home = () => {
       {
         data ? data.map(item => {
           return(
-            <div className="row">
+            <div key={item._id} className="row">
               <div className="col post-card">
-                <div key={item._id} className='card'>      
+                <div className='card'>      
                   <div className='card-image'>
                     <h4><Link to={item.postedBy._id !== state._id ? `/profile/${item.postedBy._id}` : '/profile'}>{item.postedBy.username}</Link>
                     {item.postedBy._id === state._id && 

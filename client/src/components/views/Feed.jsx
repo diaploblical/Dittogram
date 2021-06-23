@@ -114,39 +114,43 @@ const Feed = () => {
       {
         data ? data.map(item => {
           return(
-            <div key={item._id} className='card home-card'>         
-              <div className='card-image'>
-                <h4><Link to={item.postedBy._id !== state._id ? `/profile/${item.postedBy._id}` : '/profile'}>{item.postedBy.username}</Link>
-                </h4>
-                <img src={`/image/${item.photo}`} alt={item.photo}/>
-              </div>
-              <div className='card-content'>
-                {
-                  item.likes.includes(state._id) ? 
-                  <i className='material-icons mi-margins' onClick={() => {unlikePost(item._id)}}>thumb_down</i> : 
-                  <i className='material-icons mi-margins' onClick={() => {likePost(item._id)}}>thumb_up</i>
-                }         
-                <h6>{item.likes.length} likes</h6>
-                <h5>{item.title}</h5>
-                <p>{item.body}</p>
-                {
-                  item.comments.map(record=> {
-                    return(
-                      <h6 key={record._id}>
-                        <span style={{fontWeight: '500'}}>{record.postedBy.username} </span>{record.text}
-                        {record.postedBy._id === state._id && 
-                          <i className='material-icons' style={{float: 'right'}} onClick={() => {deleteComment(item._id, record._id)}}>delete</i>
-                        }                
-                      </h6>
-                    )
-                  })
-                }
-                <form onSubmit={(e) => {
-                  e.preventDefault()
-                  makeComment(e.target[0].value, item._id)
-                }}>
-                  <input type='text' placeholder='Add a comment'/>
-                </form>          
+            <div key={item._id} className="row">
+              <div className="col post-card">
+                <div className='card home-card'>         
+                  <div className='card-image'>
+                    <h4><Link to={item.postedBy._id !== state._id ? `/profile/${item.postedBy._id}` : '/profile'}>{item.postedBy.username}</Link>
+                    </h4>
+                    <img src={`/image/${item.photo}`} alt={item.photo}/>
+                  </div>
+                  <div className='card-content'>
+                    {
+                      item.likes.includes(state._id) ? 
+                      <i className='material-icons mi-margins' onClick={() => {unlikePost(item._id)}}>thumb_down</i> : 
+                      <i className='material-icons mi-margins' onClick={() => {likePost(item._id)}}>thumb_up</i>
+                    }         
+                    <h6>{item.likes.length} likes</h6>
+                    <h5>{item.title}</h5>
+                    <p>{item.body}</p>
+                    {
+                      item.comments.map(record=> {
+                        return(
+                          <h6 key={record._id}>
+                            <span style={{fontWeight: '500'}}>{record.postedBy.username} </span>{record.text}
+                            {record.postedBy._id === state._id && 
+                              <i className='material-icons' style={{float: 'right'}} onClick={() => {deleteComment(item._id, record._id)}}>delete</i>
+                            }                
+                          </h6>
+                        )
+                      })
+                    }
+                    <form onSubmit={(e) => {
+                      e.preventDefault()
+                      makeComment(e.target[0].value, item._id)
+                    }}>
+                      <input type='text' placeholder='Add a comment'/>
+                    </form>          
+                  </div>
+                </div>
               </div>
             </div>
           )
